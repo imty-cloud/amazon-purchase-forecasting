@@ -1,0 +1,307 @@
+{
+ "run_started": "2026-10-24 21:32:36",
+ "data_path": "/Users/quynhtien/Documents/\u0110o\u0302\u0300 a\u0301n du\u031b\u0323 kie\u0302\u0301n/amazon-purchases.csv",
+ "config": {
+  "START": "2018-01-01",
+  "OBSERVED_THROUGH": "2022-10-31",
+  "HORIZON_DAYS": 90,
+  "CUTOFFS": [
+   "2018-12-31",
+   "2019-03-31",
+   "2019-06-30",
+   "2019-09-30",
+   "2019-12-31",
+   "2020-03-31",
+   "2020-06-30",
+   "2020-09-30",
+   "2020-12-31",
+   "2021-03-31",
+   "2021-06-30",
+   "2021-09-30",
+   "2021-12-31",
+   "2022-03-31",
+   "2022-06-30"
+  ]
+ },
+ "files": [
+  {
+   "file": "amazon-purchases.csv",
+   "bytes": 313070173,
+   "md5": "3549d72735b1211ab009ff0177b94bd9",
+   "md5_expected": "3549d72735b1211ab009ff0177b94bd9",
+   "md5_match": true
+  },
+  {
+   "file": "survey.csv",
+   "bytes": 1342356,
+   "md5": "8340a44a5691c3763702683155cb5cc7",
+   "md5_expected": "8340a44a5691c3763702683155cb5cc7",
+   "md5_match": true
+  }
+ ],
+ "qc": {
+  "rows": 1850717,
+  "missing": {
+   "Order Date": 0,
+   "Purchase Price Per Unit": 0,
+   "Quantity": 0,
+   "Shipping Address State": 87812,
+   "Title": 89740,
+   "ASIN/ISBN (Product Code)": 973,
+   "Category": 89458,
+   "Survey ResponseID": 0
+  },
+  "empty_or_blank": {
+   "Order Date": 0,
+   "Purchase Price Per Unit": 0,
+   "Quantity": 0,
+   "Shipping Address State": 0,
+   "Title": 0,
+   "ASIN/ISBN (Product Code)": 0,
+   "Category": 0,
+   "Survey ResponseID": 0
+  },
+  "unparseable_dates": 0,
+  "dates_with_time_component": 0,
+  "non_numeric": {
+   "Purchase Price Per Unit": 0,
+   "Quantity": 0
+  },
+  "non_positive": {
+   "Purchase Price Per Unit": 0,
+   "Quantity": 0
+  },
+  "non_integer_quantity": 0,
+  "ids_not_matching_pattern": 0,
+  "ids_with_surrounding_whitespace": 0,
+  "respondents": 5027,
+  "date_min": "2018-01-01",
+  "date_max": "2024-08-15",
+  "exact_duplicate_extra_copies": 11624,
+  "exact_duplicate_groups": 6875,
+  "gift_rows": 41483,
+  "gift_respondents": 3128,
+  "rows_after_collection_end": 29,
+  "respondents_after_collection_end": 9,
+  "ids_case_insensitive_collisions": 0
+ },
+ "memory_mb_reduced_table": 69.3,
+ "identifiers": {
+  "survey_rows": 5027,
+  "survey_unique_ids": 5027,
+  "survey_duplicate_ids": 0,
+  "purchase_ids_not_in_survey": 0,
+  "survey_ids_without_purchases": 0,
+  "note": "survey.csv: only the ID column is read, for reconciliation; no survey variable is used"
+ },
+ "coverage": {
+  "calendar_days_START_to_OBSERVED_THROUGH": 1765,
+  "days_with_zero_rows": 0,
+  "min_rows_per_day": 417,
+  "median_rows_per_day": 1055.0,
+  "rows_after_OBSERVED_THROUGH": 113659,
+  "respondents_last_purchase_on_or_before_OBSERVED_THROUGH": 778,
+  "respondents_first_purchase_after_last_cutoff": 19,
+  "respondents_first_purchase_in_2018Q1": 3351,
+  "last_window_end": "2022-09-28",
+  "latest_admissible_cutoff": "2022-08-02",
+  "days_in_no_target_window": [
+   "2019-06-30",
+   "2019-09-29",
+   "2019-09-30",
+   "2019-12-30",
+   "2019-12-31",
+   "2020-03-31",
+   "2020-06-30",
+   "2020-09-29",
+   "2020-09-30",
+   "2020-12-30",
+   "2020-12-31",
+   "2021-06-30",
+   "2021-09-29",
+   "2021-09-30",
+   "2021-12-30",
+   "2021-12-31",
+   "2022-06-30"
+  ]
+ },
+ "dedup_panel_identical_to_raw": true,
+ "dedup_nogift_panel_identical_to_nogift": true,
+ "panel": {
+  "observations": 71398,
+  "y1": 61354,
+  "y0": 10044,
+  "prevalence_y1": 0.8593237905823693,
+  "matches_stageA_total": true,
+  "all_cutoffs_match_stageA": true,
+  "nogift_observations": 71261,
+  "nogift_y1": 60831,
+  "raw_only_eligible_obs (history = gift cards only)": 137,
+  "nogift_label_flips_1to0": 469
+ },
+ "stageA_qc_reconciliation": {
+  "rows": {
+   "stage_a": 1850717,
+   "stage_b": 1850717,
+   "match": true
+  },
+  "respondents": {
+   "stage_a": 5027,
+   "stage_b": 5027,
+   "match": true
+  },
+  "exact_duplicate_extra_copies": {
+   "stage_a": 11624,
+   "stage_b": 11624,
+   "match": true
+  },
+  "gift_rows": {
+   "stage_a": 41483,
+   "stage_b": 41483,
+   "match": true
+  },
+  "missing_Title": {
+   "stage_a": 89740,
+   "stage_b": 89740,
+   "match": true
+  },
+  "missing_Category": {
+   "stage_a": 89458,
+   "stage_b": 89458,
+   "match": true
+  },
+  "missing_Shipping Address State": {
+   "stage_a": 87812,
+   "stage_b": 87812,
+   "match": true
+  },
+  "missing_ASIN/ISBN (Product Code)": {
+   "stage_a": 973,
+   "stage_b": 973,
+   "match": true
+  }
+ },
+ "leakage_checks_real_data": {
+  "per_cutoff_pass": {
+   "2018-12-31": true,
+   "2019-03-31": true,
+   "2019-06-30": true,
+   "2019-09-30": true,
+   "2019-12-31": true,
+   "2020-03-31": true,
+   "2020-06-30": true,
+   "2020-09-30": true,
+   "2020-12-31": true,
+   "2021-03-31": true,
+   "2021-06-30": true,
+   "2021-09-30": true,
+   "2021-12-31": true,
+   "2022-03-31": true,
+   "2022-06-30": true
+  },
+  "all_pass": true
+ },
+ "repeated_respondents": {
+  "unique_respondents": 5008,
+  "observations": 71398,
+  "cutoffs_per_respondent": {
+   "1": 7,
+   "2": 10,
+   "3": 35,
+   "4": 24,
+   "5": 17,
+   "6": 33,
+   "7": 40,
+   "8": 46,
+   "9": 68,
+   "10": 59,
+   "11": 119,
+   "12": 81,
+   "13": 91,
+   "14": 97,
+   "15": 4281
+  },
+  "respondents_at_all_cutoffs": 4281,
+  "respondents_always_y1": 2601,
+  "respondents_ever_y0": 2407,
+  "respondents_always_y0": 27,
+  "share_of_y0_obs_from_respondents_with_ge3_y0": 0.8585225009956192,
+  "transition_counts": {
+   "0->0": 5022,
+   "0->1": 4398,
+   "1->0": 4056,
+   "1->1": 52914
+  },
+  "P(y=0 | y_prev=0)": 0.5331210191082802,
+  "P(y=0 | y_prev=1)": 0.07119536598209585,
+  "icc1_anova": 0.3459388199582211
+ },
+ "proposed_roles_pending_approval": {
+  "train": {
+   "cutoffs": [
+    "2018-12-31",
+    "2019-03-31",
+    "2019-06-30",
+    "2019-09-30",
+    "2019-12-31",
+    "2020-03-31",
+    "2020-06-30",
+    "2020-09-30",
+    "2020-12-31",
+    "2021-03-31"
+   ],
+   "obs": 46510,
+   "y0": 6982,
+   "respondents": 4915,
+   "last_label_day": "2021-06-29"
+  },
+  "validation": {
+   "cutoffs": [
+    "2021-06-30",
+    "2021-09-30"
+   ],
+   "obs": 9888,
+   "y0": 1169,
+   "respondents": 4956,
+   "last_label_day": "2021-12-29"
+  },
+  "test": {
+   "cutoffs": [
+    "2022-03-31",
+    "2022-06-30"
+   ],
+   "obs": 10009,
+   "y0": 1266,
+   "respondents": 5008,
+   "last_label_day": "2022-09-28"
+  },
+  "test_respondents_also_in_train": 4915,
+  "test_respondents_not_in_train": 93,
+  "embargo_ok": {
+   "train_vs_validation": true,
+   "refit_vs_test": true
+  }
+ },
+ "independent_check": {
+  "seconds": 4.8,
+  "pairs_only_in_pipeline": 0,
+  "pairs_only_in_independent": 0,
+  "label_disagreements_raw": 0,
+  "label_disagreements_nogift": 0,
+  "rows_match": true,
+  "respondents_match": true,
+  "exact_duplicate_copies_match": true,
+  "gift_rows_match": true,
+  "cutoffs_match": true,
+  "all_match": true
+ },
+ "environment": {
+  "python": "3.14.7",
+  "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+  "numpy": "2.5.3",
+  "pandas": "3.0.6",
+  "scikit-learn": "1.9.1",
+  "lightgbm": "4.7.0"
+ },
+ "runtime_seconds": 16.3
+}

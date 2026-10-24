@@ -1,0 +1,11 @@
+[project]
+name = "amazon-purchase-forecasting"
+version = "0.1.0"
+requires-python = ">=3.14"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+markers = ["realdata: needs the raw CSV at its original location (skipped if absent)"]
+addopts = "-ra --strict-markers"
+filterwarnings = ["error"]

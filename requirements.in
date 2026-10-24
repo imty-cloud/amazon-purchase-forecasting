@@ -1,0 +1,11 @@
+# Direct dependencies. Analysis stack pinned to the versions used by the rfm_v3 baseline
+# (rfm_audited/results_v2/99_environment.csv); lightgbm and pytest added for this project.
+numpy==2.5.3
+pandas==3.0.6
+scikit-learn==1.9.1
+scipy==1.18.1
+joblib==1.6.0
+matplotlib==3.11.2
+threadpoolctl==3.7.0
+lightgbm==4.7.0
+pytest

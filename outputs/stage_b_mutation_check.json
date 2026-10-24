@@ -1,0 +1,55 @@
+{
+ "all_mutants_caught_and_control_passes": true,
+ "results": [
+  {
+   "mutant": "none (control)",
+   "tests_failed": false,
+   "pytest": "51 passed, 5 deselected in 0.79s"
+  },
+  {
+   "mutant": "window end c+89",
+   "tests_failed": true,
+   "pytest": "8 failed, 43 passed, 5 deselected in 0.78s"
+  },
+  {
+   "mutant": "window includes cutoff day",
+   "tests_failed": true,
+   "pytest": "9 failed, 42 passed, 5 deselected in 0.78s"
+  },
+  {
+   "mutant": "history excludes cutoff day",
+   "tests_failed": true,
+   "pytest": "3 failed, 48 passed, 5 deselected in 0.77s"
+  },
+  {
+   "mutant": "completeness guard off by one",
+   "tests_failed": true,
+   "pytest": "1 failed, 50 passed, 5 deselected in 0.77s"
+  },
+  {
+   "mutant": "no START filter",
+   "tests_failed": true,
+   "pytest": "2 failed, 49 passed, 5 deselected in 0.74s"
+  },
+  {
+   "mutant": "duplicates keyed on 7 columns",
+   "tests_failed": true,
+   "pytest": "1 failed, 50 passed, 5 deselected in 0.77s"
+  },
+  {
+   "mutant": "gift title rule case-sensitive",
+   "tests_failed": true,
+   "pytest": "1 failed, 50 passed, 5 deselected in 0.77s"
+  },
+  {
+   "mutant": "survey guard disabled",
+   "tests_failed": true,
+   "pytest": "1 failed, 50 passed, 5 deselected in 0.77s"
+  },
+  {
+   "mutant": "panel keeps input columns",
+   "tests_failed": true,
+   "pytest": "1 failed, 50 passed, 5 deselected in 0.74s"
+  }
+ ]
+}
