@@ -1,6 +1,6 @@
 """Plants known boundary bugs in a temporary copy of src/apf and checks that the test suite fails.
 
-Usage: .venv/bin/python scripts/mutation_check.py   (writes outputs/stage_b_mutation_check.json)
+Usage: .venv/bin/python scripts/mutation_check.py   (writes outputs/mutation_check.json)
 """
 import json
 import shutil
@@ -23,6 +23,47 @@ MUTANTS = [  # (name, file, original, mutated)
     ("survey guard disabled", "target.py", "    if bad:", "    if False:"),
     ("panel keeps input columns", "target.py", "t = tx.loc[tx[DATE] >= START, [ID, DATE]]",
      "t = tx.loc[tx[DATE] >= START]"),
+    # Stage C
+    ("features read all data, not history", "features.py", "h = history_until(store.days, c)",
+     "h = store.days"),
+    ("trailing window one day too long", "features.py",
+     'F[f"days_{w}"] = _count_in(h, c - pd.Timedelta(days=w - 1), c, ids)',
+     'F[f"days_{w}"] = _count_in(h, c - pd.Timedelta(days=w), c, ids)'),
+    ("categories_365 one day too long", "features.py", "cd[DATE] >= c - pd.Timedelta(days=364)",
+     "cd[DATE] >= c - pd.Timedelta(days=365)"),
+    ("categories counted after cutoff", "features.py", "cd = history_until(store.cat_days, c)",
+     "cd = store.cat_days"),
+    ("previous window includes c_prev", "features.py",
+     "active = _count_in(h, cp + pd.Timedelta(days=1), prev_end, ids) > 0",
+     "active = _count_in(h, cp, prev_end, ids) > 0"),
+    ("missing prior outcome set to 0", "features.py",
+     'F["prev_90d_active"] = active.astype(float).where(first <= cp)',
+     'F["prev_90d_active"] = active.astype(float)'),
+    ("P(y=1) column returned as P(y=0)", "evaluation.py", "classes.index(0)", "classes.index(1)"),
+    ("event coded as purchase", "evaluation.py", "return (y == 0).astype(int)", "return (y == 1).astype(int)"),
+    ("row bootstrap instead of respondent", "evaluation.py",
+     "        idx = np.concatenate([rows_of[k] for k in r.integers(0, len(rows_of), len(rows_of))])\n        out.append",
+     "        idx = r.integers(0, len(y), len(y))\n        out.append"),
+    ("hold-out respondents in train", "splits.py",
+     'p["in_train"] = p["cutoff"].isin(TRAIN_CUTOFFS) & fit_ok', 'p["in_train"] = p["cutoff"].isin(TRAIN_CUTOFFS)'),
+    ("unseeded hold-out", "splits.py", "np.random.default_rng(seed)", "np.random.default_rng()"),
+    # Stage D preparation
+    ("top-k ties broken by row order", "evaluation.py",
+     "tp = (e[above] == 1).sum() + take * (e[at] == 1).sum()",
+     "tp = (e[np.argsort(-s, kind='mergesort')[:k]] == 1).sum()"),
+    ("bootstrap not paired across models", "evaluation.py",
+     "        for m, (p, s) in preds.items():\n            for name, fn in metric_fns.items():",
+     "        for m, (p, s) in preds.items():\n            idx = np.concatenate([rows_of[k] for k in r.integers(0, len(rows_of), len(rows_of))])\n            for name, fn in metric_fns.items():"),
+    ("early-stopping metric targets y = 1", "models.py",
+     "average_precision_score(1 - np.asarray(y_true), -np.asarray(y_pred))",
+     "average_precision_score(np.asarray(y_true), np.asarray(y_pred))"),
+    ("refit ignores selected iterations", "models.py",
+     '"n_estimators": int(n_estimators)}', '"n_estimators": LGBM_FIXED["n_estimators"]}'),
+    ("lock ignores protocol changes", "lock.py",
+     'if payload["protocol_sha256"] != sha256(protocol):', "if False:"),
+    ("lock ignores uncommitted code", "lock.py", "    if dirty:\n", "    if False:\n"),
+    ("phase 1 can read test rows", "lock.py",
+     'out = table[table["cutoff"] < min(TEST_CUTOFFS)]', 'out = table[table["cutoff"] <= max(TEST_CUTOFFS)]'),
 ]
 
 
@@ -50,7 +91,7 @@ def main():
             res.append({"mutant": name, "tests_failed": code != 0, "pytest": last})
             print(f"{name:35s} {'CAUGHT' if code else 'not caught'}  {last}")
     ok = (not res[0]["tests_failed"]) and all(r["tests_failed"] for r in res[1:])
-    (ROOT / "outputs" / "stage_b_mutation_check.json").write_text(
+    (ROOT / "outputs" / "mutation_check.json").write_text(
         json.dumps({"all_mutants_caught_and_control_passes": ok, "results": res}, indent=1))
     sys.exit(0 if ok else 1)
 

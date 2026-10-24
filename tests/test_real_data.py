@@ -40,3 +40,29 @@ def test_quality_counts(loaded):
 def test_counts_reconcile_with_stage_a(loaded, cutoff, expected):
     p = build_panel(purchase_days(loaded[0]), [pd.Timestamp(cutoff)])
     assert (len(p), int(p["y"].sum()), int((p["y"] == 0).sum())) == expected
+
+
+# ---- Stage C ------------------------------------------------------------------------------
+
+def test_features_ignore_post_cutoff_rows_real(loaded):
+    from apf.features import features_at, make_daily_store
+    tx = loaded[0]
+    c = pd.Timestamp("2021-03-31")
+    full = features_at(make_daily_store(tx), c)
+    assert full.equals(features_at(make_daily_store(tx[tx[C.DATE] <= c]), c))
+    assert len(full) == 4915
+
+
+def test_prev_90d_active_equals_previous_label_real(loaded):
+    from apf.features import features_at, make_daily_store
+    tx = loaded[0]
+    f = features_at(make_daily_store(tx), pd.Timestamp("2022-06-30"))["prev_90d_active"].dropna()
+    prev = build_panel(purchase_days(tx), [pd.Timestamp("2022-03-31")]).set_index(C.ID)["y"]
+    assert f.index.equals(prev.index) and (f == prev).all()
+
+
+def test_holdout_real(loaded):
+    from apf.splits import holdout_respondents
+    ids = build_panel(purchase_days(loaded[0]), C.CUTOFFS)[C.ID]
+    h = holdout_respondents(ids)
+    assert len(h) == 1002 and h.equals(holdout_respondents(ids.sample(frac=1, random_state=1)))

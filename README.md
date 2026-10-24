@@ -19,8 +19,10 @@ Harvard Dataverse doi:10.7910/DVN/YGLYDY, v1.0).
 | Stage | State |
 |---|---|
 | A Audit and feasibility | Done: `reports/audit_and_feasibility.md` |
-| B Data and target validation | Done: `reports/stage_b_data_target_validation.md` |
-| C Features · D Modelling · E Report · F Reproducibility | Not started (awaiting approval) |
+| B Data and target validation | Done: `reports/stage_b_data_target_validation.md` (git tag `stage-b`) |
+| C Features, baselines, validation design | Done: `reports/stage_c_features_validation.md` |
+| D Modelling | Protocol proposed: `reports/stage_d_protocol.md`; no model trained (awaiting approval) |
+| E Report · F Reproducibility | Not started |
 
 ## Layout
 
@@ -29,27 +31,38 @@ Harvard Dataverse doi:10.7910/DVN/YGLYDY, v1.0).
 | `src/apf/config.py` | Paths, checksums, observation period, 15 cutoffs, 90-day horizon, gift-card rule |
 | `src/apf/data.py` | Chunked read-only loader, raw-text quality counts, duplicate and gift-card flags, data versions |
 | `src/apf/target.py` | Eligibility, target window, completeness guard, respondent-cutoff panel |
+| `src/apf/features.py` | 19 features at a cutoff from history ≤ cutoff; definitions in `FEATURES` |
+| `src/apf/evaluation.py` | Metrics for the event y = 0 (AP, ROC-AUC, Brier, calibration, top-k %), respondent-cluster bootstrap, baselines |
+| `src/apf/splits.py` | Temporal roles, 20 % respondent hold-out (seed 20261024), embargo and isolation checks |
+| `src/apf/models.py` | Stage D model specifications: feature sets, logistic-regression pipeline, LightGBM grid, early stopping, refit, selection rule |
+| `src/apf/lock.py` | Test-set guard: selection reads only pre-test rows; test rows only under a committed, unchanged lock |
 | `scripts/stage_b_validate.py` | Stage B run: checks, panel, sensitivity, repeated-respondent analysis, independent check |
 | `scripts/independent_check.py` | Standard-library recomputation of counts and every label (shares no code with `src/`) |
-| `scripts/mutation_check.py` | Plants known bugs in a temporary copy of `src/` and confirms the tests catch them |
-| `scripts/build_stage_b_report.py` | Writes the Stage B report from `outputs/` |
+| `scripts/stage_c_features.py` | Stage C run: features, leakage checks, split checks, training-period baseline smoke check |
+| `scripts/independent_feature_check.py` | Standard-library recomputation of 13 features for 300 sampled respondents |
+| `scripts/mutation_check.py` | Plants known bugs (Stages B and C) in a temporary copy of `src/` and confirms the tests catch them |
+| `scripts/build_stage_b_report.py`, `build_stage_c_report.py` | Write the stage reports from `outputs/` |
 | `tests/` | Unit tests on synthetic data, plus tests on the real CSV (marker `realdata`, skipped if the file is absent) |
 | `outputs/` | `stage_b_validation_summary.json` (machine-readable summary), per-cutoff counts, monthly rows, repeated-respondent table, mutation results. `*.csv.gz` (row-level labels) are git-ignored |
 
 Code reused from the RFM thesis (`../rfm_v3/rfm_study_v3.ipynb`, cells 4 and 6) is marked at its point of use.
 The old projects are only read.
 
-## Reproduce Stage B
+## Reproduce Stages B and C
 
 ```bash
 cd "/Users/quynhtien/Documents/Đồ án dự kiến/amazon_purchase_forecasting"
 /Library/Frameworks/Python.framework/Versions/3.14/bin/python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.lock.txt
 .venv/bin/python -m pytest                          # all tests (about 10 s)
-.venv/bin/python scripts/stage_b_validate.py        # about 20 s; writes outputs/
-.venv/bin/python scripts/mutation_check.py          # about 10 s
-.venv/bin/python scripts/build_stage_b_report.py    # writes reports/stage_b_data_target_validation.md
+.venv/bin/python scripts/stage_b_validate.py        # about 20 s; writes outputs/stage_b_*
+.venv/bin/python scripts/stage_c_features.py        # about 30 s; writes outputs/stage_c_*, model_table_*.csv.gz
+.venv/bin/python scripts/mutation_check.py          # about 15 min (27 mutants); outputs/mutation_check.json
+.venv/bin/python scripts/build_stage_c_report.py    # writes reports/stage_c_features_validation.md
 ```
+
+`reports/stage_b_data_target_validation.md` is frozen at tag `stage-b`; `build_stage_b_report.py` regenerates it
+(its run line and test count then reflect the current suite).
 
 Set `APF_DATA_DIR` if the CSVs are not in the project's parent folder. Run `pytest -m "not realdata"` to skip
 the tests that need the CSV. The environment is Python 3.14.7 (macOS arm64); `requirements.in` lists the

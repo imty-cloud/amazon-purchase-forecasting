@@ -1,0 +1,20 @@
+feature,definition,lookback,missing,leakage_note
+recency_days,days from the last purchase day to the cutoff (0 = bought on the cutoff day),all history,never missing,uses the last day <= c only; tested at the cutoff day and day c+1
+frequency_days,distinct purchase days,all history,never missing,counts days <= c; duplicates collapse to one day
+monetary_total,sum of price x quantity,all history,never missing,includes gift cards and exact-duplicate rows (primary policy)
+spend_per_purchase_day,monetary_total / frequency_days (proxy for order value: no order IDs),all history,never missing,not an order value: a day can hold several orders
+days_30,distinct purchase days in the trailing window,30 d,0 if none,window c-29 .. c; edges tested
+days_90,distinct purchase days in the trailing window,90 d,0 if none,window c-89 .. c; edges tested
+days_180,distinct purchase days in the trailing window,180 d,0 if none,window c-179 .. c; edges tested
+days_365,distinct purchase days in the trailing window,365 d,0 if none,window c-364 .. c; edges tested
+spend_90,sum of price x quantity in the trailing window,90 d,0 if none,window c-89 .. c
+spend_365,sum of price x quantity in the trailing window,365 d,0 if none,window c-364 .. c
+categories_total,distinct non-missing categories,all history,0 if all missing,category first seen after c is not counted
+categories_365,distinct non-missing categories in the trailing window,365 d,0 if none,window c-364 .. c
+tenure_days,"days from the first observed purchase (>= 2018-01-01, left-truncated) to the cutoff",all history,never missing,"left-truncated at 2018-01-01: observed span, not account age"
+median_gap_days,median gap between consecutive purchase days,all history,NaN if frequency_days = 1,gaps between days <= c only
+recency_to_median_gap,recency_days / median_gap_days,all history,NaN if frequency_days = 1,both terms use days <= c
+active_months_12,calendar months with >= 1 purchase among the 12 months ending with the cutoff month,12 months,0 if none,"cutoffs are month-ends, so the 12 months end on c"
+days_same_window_last_year,distinct purchase days in c-364 .. c-275 (the target window shifted back 365 d),c-364 .. c-275,0 if none,ends 275 days before c
+prev_90d_active,"1 if >= 1 purchase day in the previous quarter-end's 90-day target window (c_prev+1 .. c_prev+90, which ends on or before c)",c_prev+1 .. c_prev+90,NaN if no purchase on or before c_prev,previous label window ends <= c (asserted); equals the previous cutoff's y
+cutoff_quarter,calendar quarter of the cutoff (1-4),-,never missing,"calendar fact known in advance; it can encode period effects, not leakage"

@@ -14,7 +14,8 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "outputs"
 S = json.loads((OUT / "stage_b_validation_summary.json").read_text())
-M = json.loads((OUT / "stage_b_mutation_check.json").read_text())
+M = json.loads((OUT / "mutation_check.json").read_text())
+M["results"] = M["results"][:10]   # control + Stage B mutants
 cc = pd.read_csv(OUT / "stage_b_cutoff_counts.csv")
 qc, cov, pan, rr = S["qc"], S["coverage"], S["panel"], S["repeated_respondents"]
 ic, role = S["independent_check"], S["proposed_roles_pending_approval"]
@@ -295,7 +296,7 @@ cd "/Users/quynhtien/Documents/Đồ án dự kiến/amazon_purchase_forecasting
 .venv/bin/python -m pip install -r requirements.lock.txt
 .venv/bin/python -m pytest                          # 56 tests, incl. 5 on the real CSV
 .venv/bin/python scripts/stage_b_validate.py        # outputs/ (includes the independent check)
-.venv/bin/python scripts/mutation_check.py          # outputs/stage_b_mutation_check.json
+.venv/bin/python scripts/mutation_check.py          # outputs/mutation_check.json
 .venv/bin/python scripts/build_stage_b_report.py    # this report
 ```
 `APF_DATA_DIR` overrides the data folder (default: the project's parent folder).
