@@ -1,0 +1,51 @@
+{
+ "protocol_file": "stage_d_protocol.md",
+ "protocol_sha256": "2d5c3c18420f9dcab34f4a0932352f8953d38ac271fa006c7e9b2134b4826374",
+ "written": "2026-10-25 10:29:32",
+ "selected": {
+  "configurations": {
+   "M1_lr_rfm": {
+    "feature_set": "rfm",
+    "C": 0.01
+   },
+   "M2_lr_full": {
+    "feature_set": "full",
+    "C": 0.01
+   },
+   "S1_lr_no_prev": {
+    "feature_set": "no_prev",
+    "C": 0.01
+   },
+   "M3_lgbm_full": {
+    "feature_set": "full",
+    "num_leaves": 7,
+    "min_child_samples": 200,
+    "best_iteration": 114
+   },
+   "S2_lgbm_no_prev": {
+    "feature_set": "no_prev",
+    "num_leaves": 7,
+    "min_child_samples": 200,
+    "best_iteration": 114
+   }
+  },
+  "data_md5": "3549d72735b1211ab009ff0177b94bd9",
+  "environment": {
+   "python": "3.14.7",
+   "platform": "macOS-26.5.1-arm64-arm-64bit-Mach-O",
+   "numpy": "2.5.3",
+   "pandas": "3.0.6",
+   "scikit-learn": "1.9.1",
+   "lightgbm": "4.7.0"
+  },
+  "seeds": {
+   "holdout": 20261024,
+   "lightgbm": 20261024,
+   "bootstrap": 20261024,
+   "bootstrap_draws": 1000
+  },
+  "phase1_selection_file": "stage_d_phase1_selection.json",
+  "phase1_selection_sha256": "5db586887cb4aaca3d33ed41016642d140a1d18d563defb391d07ac71ac61ccc",
+  "phase1_commit": "873af540f3994d78ed5184fa27684dae0a384efa"
+ }
+}
