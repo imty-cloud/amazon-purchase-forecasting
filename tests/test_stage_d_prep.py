@@ -293,3 +293,36 @@ def test_phase1_script_builds_labels_and_features_for_pre_test_cutoffs_only():
     assert len(calls) == 2 and all(isinstance(c.args[1], ast.Name) and c.args[1].id == "dev" for c in calls)
     assert "dev = [c for c in C.CUTOFFS if c < min(TEST_CUTOFFS)]" in src
     assert "rows_before_test(tab)" in src and "release_test_rows" not in src
+
+
+# ---- superseding lock ------------------------------------------------------------------------
+
+def _selection(tmp_path, proto_text="protocol v1.2", configs=None):
+    proto = tmp_path / "stage_d_protocol.md"
+    proto.write_text(proto_text)
+    sel = tmp_path / "stage_d_phase1_selection.json"
+    sel.write_text(json.dumps({"protocol_sha256_at_run": L.sha256(proto), "data_md5": "m", "environment": {},
+                               "seeds": {"holdout": 1, "lightgbm": 1},
+                               "selected": configs or {"M2_lr_full": {"C": 0.01}}}))
+    return proto, sel
+
+
+def test_lock_contents_records_what_it_supersedes(tmp_path):
+    proto, sel = _selection(tmp_path)
+    prev = {"protocol_sha256": "old", "written": "2026-10-25 10:29:32",
+            "selected": {"configurations": {"M2_lr_full": {"C": 0.01}}, "phase1_selection_sha256": "oldsel",
+                         "phase1_commit": "873af54"}}
+    out = L.lock_contents(sel, "head", protocol=proto, previous=prev, reason="protocol v1.2",
+                          previous_tag="stage-d-lock")
+    assert out["supersedes"] == {"protocol_sha256": "old", "written": "2026-10-25 10:29:32",
+                                 "phase1_selection_sha256": "oldsel", "phase1_commit": "873af54",
+                                 "tag": "stage-d-lock", "reason": "protocol v1.2"}
+    assert out["phase1_selection_sha256"] == L.sha256(sel) and out["configurations"] == {"M2_lr_full": {"C": 0.01}}
+    with pytest.raises(L.LockError, match="reason"):
+        L.lock_contents(sel, "head", protocol=proto, previous=prev, reason="")
+    changed = {**prev, "selected": {**prev["selected"], "configurations": {"M2_lr_full": {"C": 1.0}}}}
+    with pytest.raises(L.LockError, match="differ"):
+        L.lock_contents(sel, "head", protocol=proto, previous=changed, reason="x")
+    proto.write_text("protocol edited after Phase 1")
+    with pytest.raises(L.LockError, match="protocol changed"):
+        L.lock_contents(sel, "head", protocol=proto)

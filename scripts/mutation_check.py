@@ -100,6 +100,10 @@ MUTANTS = [  # (name, file, original, mutated)
      "                k = np.ones(len(cut), bool)\n"),
     ("AP lift computed as a difference", "phase2.py",
      'st["ap_lift"] = st["ap_y0"] / st["prevalence_y0"]', 'st["ap_lift"] = st["ap_y0"] - st["prevalence_y0"]'),
+    # superseding lock
+    ("superseding lock accepts changed configurations", "lock.py",
+     'if previous["selected"]["configurations"] != out["configurations"]:', "if False:"),
+    ("superseding lock needs no reason", "lock.py", "        if not reason:\n", "        if False:\n"),
 ]
 
 

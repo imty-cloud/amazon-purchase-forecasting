@@ -59,10 +59,10 @@ cd "/Users/quynhtien/Documents/Đồ án dự kiến/amazon_purchase_forecasting
 .venv/bin/python -m pytest                          # all tests (about 10 s)
 .venv/bin/python scripts/stage_b_validate.py        # about 20 s; writes outputs/stage_b_*
 .venv/bin/python scripts/stage_c_features.py        # about 30 s; writes outputs/stage_c_*, model_table_*.csv.gz
-.venv/bin/python scripts/mutation_check.py          # about 1 min (40 mutants, 4 in parallel); outputs/mutation_check.json
+.venv/bin/python scripts/mutation_check.py          # about 1 min (42 mutants, 4 in parallel); outputs/mutation_check.json
 .venv/bin/python scripts/build_stage_c_report.py    # writes reports/stage_c_features_validation.md
 .venv/bin/python scripts/stage_d_phase1.py          # about 20 s; selection on Train -> Tune only (no test labels)
-.venv/bin/python scripts/stage_d_write_lock.py      # once; refuses if a lock exists
+.venv/bin/python scripts/stage_d_write_lock.py      # refuses if a lock exists; --supersede "reason" [--dry-run] to replace it
 .venv/bin/python scripts/stage_d_phase2.py          # NOT YET RUN: test evaluation, once, only under a valid lock
 ```
 
