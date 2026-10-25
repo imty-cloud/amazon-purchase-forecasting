@@ -37,23 +37,26 @@ def rows_before_test(table):
 
 def lock_contents(selection_path, head, protocol=PROTOCOL, previous=None, reason=None, previous_tag=None):
     """The `selected` part of a lock, built from a Phase 1 selection file. With `previous` (the lock being
-    superseded) a reason is required and the configurations must be identical to the previous lock's."""
+    superseded) a reason is required and the configurations must be identical to the previous lock's.
+    `head_at_lock` is the commit checked out when the lock is written (`head`)."""
     sel = json.loads(Path(selection_path).read_text())
     if sel["protocol_sha256_at_run"] != sha256(protocol):
         raise LockError("protocol changed after Phase 1 ran")
     out = {"configurations": sel["selected"], "data_md5": sel["data_md5"], "environment": sel["environment"],
            "seeds": {**sel["seeds"], "bootstrap": 20261024, "bootstrap_draws": 1000},
            "phase1_selection_file": Path(selection_path).name,
-           "phase1_selection_sha256": sha256(selection_path), "phase1_commit": head}
+           "phase1_selection_sha256": sha256(selection_path), "head_at_lock": head}
     if previous is not None:
         if not reason:
             raise LockError("a superseding lock needs a reason")
         if previous["selected"]["configurations"] != out["configurations"]:
             raise LockError("configurations differ from the superseded lock")
+        prev = previous["selected"]
         out["supersedes"] = {"protocol_sha256": previous["protocol_sha256"], "written": previous["written"],
-                             "phase1_selection_sha256": previous["selected"]["phase1_selection_sha256"],
-                             "phase1_commit": previous["selected"]["phase1_commit"], "tag": previous_tag,
-                             "reason": reason}
+                             "phase1_selection_sha256": prev["phase1_selection_sha256"],
+                             # locks written before the rename call this field phase1_commit
+                             "head_at_lock": prev.get("head_at_lock", prev.get("phase1_commit")),
+                             "tag": previous_tag, "reason": reason}
     return out
 
 

@@ -315,8 +315,13 @@ def test_lock_contents_records_what_it_supersedes(tmp_path):
     out = L.lock_contents(sel, "head", protocol=proto, previous=prev, reason="protocol v1.2",
                           previous_tag="stage-d-lock")
     assert out["supersedes"] == {"protocol_sha256": "old", "written": "2026-10-25 10:29:32",
-                                 "phase1_selection_sha256": "oldsel", "phase1_commit": "873af54",
+                                 "phase1_selection_sha256": "oldsel", "head_at_lock": "873af54",
                                  "tag": "stage-d-lock", "reason": "protocol v1.2"}
+    assert out["head_at_lock"] == "head" and "phase1_commit" not in out
+    renamed = {**prev, "selected": {**{k: v for k, v in prev["selected"].items() if k != "phase1_commit"},
+                                    "head_at_lock": "5c1bd3e"}}       # a lock written after the rename
+    out2 = L.lock_contents(sel, "head", protocol=proto, previous=renamed, reason="x")
+    assert out2["supersedes"]["head_at_lock"] == "5c1bd3e"
     assert out["phase1_selection_sha256"] == L.sha256(sel) and out["configurations"] == {"M2_lr_full": {"C": 0.01}}
     with pytest.raises(L.LockError, match="reason"):
         L.lock_contents(sel, "head", protocol=proto, previous=prev, reason="")

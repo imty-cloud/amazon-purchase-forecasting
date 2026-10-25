@@ -235,5 +235,5 @@ def main(out_dir=OUTPUT_DIR, B=1000, loader=None):
     res["predictions"].to_csv(out_dir / "stage_d_predictions.csv.gz", index=False, compression="gzip")
     (out_dir / "stage_d_phase2_meta.json").write_text(json.dumps(
         {**res["meta"], "lock_protocol_sha256": payload["protocol_sha256"],
-         "lock_phase1_commit": payload["selected"]["phase1_commit"]}, indent=1, default=str))
+         "lock_head_at_lock": payload["selected"]["head_at_lock"]}, indent=1, default=str))
     return res

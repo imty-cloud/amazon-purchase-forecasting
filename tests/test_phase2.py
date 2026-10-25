@@ -58,7 +58,7 @@ def _fake_lock(monkeypatch, tmp_path, sel_sha=None):
     sel.write_text("{}")
     payload = {"protocol_sha256": "x", "selected": {
         "phase1_selection_file": sel.name, "phase1_selection_sha256": sel_sha or sha256(sel),
-        "configurations": CONFIG, "seeds": {"bootstrap": 3}, "phase1_commit": "abc"}}
+        "configurations": CONFIG, "seeds": {"bootstrap": 3}, "head_at_lock": "abc"}}
     monkeypatch.setattr(P2, "require_lock", lambda: payload)
     monkeypatch.setattr(P2, "OUTPUT_DIR", tmp_path)
     monkeypatch.setattr(P2, "release_test_rows", lambda t: (t[t["cutoff"].isin(TEST_CUTOFFS)], payload))
