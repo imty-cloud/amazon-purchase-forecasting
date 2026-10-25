@@ -1,7 +1,7 @@
 {
  "protocol_file": "stage_d_protocol.md",
- "protocol_sha256": "2d5c3c18420f9dcab34f4a0932352f8953d38ac271fa006c7e9b2134b4826374",
- "written": "2026-10-25 10:29:32",
+ "protocol_sha256": "6b3ac9b4aa4b358cb1efc22e2adf0c4a1dca5a10ba56cf19e10fc182f83cbb57",
+ "written": "2026-10-25 11:26:27",
  "selected": {
   "configurations": {
    "M1_lr_rfm": {
@@ -45,7 +45,15 @@
    "bootstrap_draws": 1000
   },
   "phase1_selection_file": "stage_d_phase1_selection.json",
-  "phase1_selection_sha256": "5db586887cb4aaca3d33ed41016642d140a1d18d563defb391d07ac71ac61ccc",
-  "phase1_commit": "873af540f3994d78ed5184fa27684dae0a384efa"
+  "phase1_selection_sha256": "d8a831d06a2d8a8feaaec5353aeb283b689b34ae1e3a53d1263114c4462ead02",
+  "head_at_lock": "0ba62abacb6dbe4577a5be47c7ef97e19b78dffa",
+  "supersedes": {
+   "protocol_sha256": "2d5c3c18420f9dcab34f4a0932352f8953d38ac271fa006c7e9b2134b4826374",
+   "written": "2026-10-25 10:29:32",
+   "phase1_selection_sha256": "5db586887cb4aaca3d33ed41016642d140a1d18d563defb391d07ac71ac61ccc",
+   "head_at_lock": "873af540f3994d78ed5184fa27684dae0a384efa",
+   "tag": "stage-d-lock",
+   "reason": "Protocol v1.2 (2026-10-25): y = 0 event convention, label observability, temporal-stability reporting, primary comparisons P1-P3 with Bonferroni intervals, reliability tie fix. Approved before any test label was built; configurations unchanged."
+  }
  }
 }
