@@ -1,0 +1,72 @@
+{
+ "fit_rows": {
+  "temporal_test": {
+   "B0_prevalence": 49147,
+   "B1_persistence": 49147,
+   "B2_recency": 49147,
+   "M1_lr_rfm": 49147,
+   "M2_lr_full": 49147,
+   "S1_lr_no_prev": 49147,
+   "M3_lgbm_full": 49147,
+   "S2_lgbm_no_prev": 49147
+  },
+  "holdout_test": {
+   "B0_prevalence": 49147,
+   "B1_persistence": 49147,
+   "B2_recency": 49147,
+   "M1_lr_rfm": 49147,
+   "M2_lr_full": 49147,
+   "S1_lr_no_prev": 49147,
+   "M3_lgbm_full": 49147,
+   "S2_lgbm_no_prev": 49147
+  },
+  "holdout_train_period": {
+   "B0_prevalence": 37239,
+   "B1_persistence": 37239,
+   "B2_recency": 37239,
+   "M1_lr_rfm": 37239,
+   "M2_lr_full": 37239,
+   "S1_lr_no_prev": 37239,
+   "M3_lgbm_full": 37239,
+   "S2_lgbm_no_prev": 37239
+  }
+ },
+ "lightgbm_trees": {
+  "temporal_test": {
+   "M3_lgbm_full": 114,
+   "S2_lgbm_no_prev": 114
+  },
+  "holdout_test": {
+   "M3_lgbm_full": 114,
+   "S2_lgbm_no_prev": 114
+  },
+  "holdout_train_period": {
+   "M3_lgbm_full": 114,
+   "S2_lgbm_no_prev": 114
+  }
+ },
+ "B": 1000,
+ "seed": 20261024,
+ "rows": {
+  "temporal_test": 8005,
+  "holdout_test": 2004,
+  "holdout_train_period": 9271
+ },
+ "refit_cutoffs": [
+  "2018-12-31",
+  "2019-03-31",
+  "2019-06-30",
+  "2019-09-30",
+  "2019-12-31",
+  "2020-03-31",
+  "2020-06-30",
+  "2020-09-30",
+  "2020-12-31",
+  "2021-03-31",
+  "2021-06-30",
+  "2021-09-30",
+  "2021-12-31"
+ ],
+ "lock_protocol_sha256": "6b3ac9b4aa4b358cb1efc22e2adf0c4a1dca5a10ba56cf19e10fc182f83cbb57",
+ "lock_head_at_lock": "0ba62abacb6dbe4577a5be47c7ef97e19b78dffa"
+}
