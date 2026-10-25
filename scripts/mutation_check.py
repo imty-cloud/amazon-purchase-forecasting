@@ -82,6 +82,24 @@ MUTANTS = [  # (name, file, original, mutated)
      'refit, train = dev[dev["in_refit"]], dev[dev["in_train"]]', 'refit, train = dev, dev[dev["in_train"]]'),
     ("phase 2 run-once guard removed", "phase2.py",
      "    if (out_dir / RESULT_FILE).exists():", "    if False:"),
+    # class orientation and preprocessing
+    ("calibration intercept sign flipped", "evaluation.py",
+     "if np.mean(1 / (1 + np.exp(-(mid + lp)))) < e.mean():", "if np.mean(1 / (1 + np.exp(-(mid + lp)))) > e.mean():"),
+    ("LR imputes by mean, not median", "models.py",
+     'blocks.append((f, Pipeline([("impute", SimpleImputer(strategy="median", add_indicator=True)),\n                                    ("log1p"',
+     'blocks.append((f, Pipeline([("impute", SimpleImputer(strategy="mean", add_indicator=True)),\n                                    ("log1p"'),
+    ("reliability bins split ties by row order", "evaluation.py",
+     'd["bin"] = d["p0"].rank(method="dense").astype(int) - 1',
+     'd["bin"] = pd.qcut(d["p0"].rank(method="first"), n_bins, labels=False)'),
+    # protocol v1.2 reporting
+    ("Bonferroni level left at 95 %", "phase2.py",
+     "BONF_LO, BONF_HI = 100 * 0.05 / N_PRIMARY / 2, 100 - 100 * 0.05 / N_PRIMARY / 2", "BONF_LO, BONF_HI = 2.5, 97.5"),
+    ("P3 compares LightGBM, not the primary model", "phase2.py",
+     '("P3", "M2_lr_full", "B2_recency", "primary")', '("P3", "M3_lgbm_full", "B2_recency", "primary")'),
+    ("per-cutoff AP CI uses all cutoffs", "phase2.py", "                k = cut == c\n",
+     "                k = np.ones(len(cut), bool)\n"),
+    ("AP lift computed as a difference", "phase2.py",
+     'st["ap_lift"] = st["ap_y0"] / st["prevalence_y0"]', 'st["ap_lift"] = st["ap_y0"] - st["prevalence_y0"]'),
 ]
 
 

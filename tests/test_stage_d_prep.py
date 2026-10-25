@@ -227,3 +227,69 @@ def test_features_module_does_not_use_target_labels():
     names = {n.id for n in ast.walk(ast.parse(src)) if isinstance(n, ast.Name)}
     names |= {a.name for n in ast.walk(ast.parse(src)) if isinstance(n, ast.ImportFrom) for a in n.names}
     assert not names & {"labels_at", "build_panel", "check_window_complete"}
+
+
+# ---- class orientation and prevalence (event = y = 0) -------------------------------------
+
+def test_calibration_sign_convention_for_event_y0():
+    r = np.random.default_rng(5)
+    p0 = r.uniform(0.05, 0.5, 100_000)
+    y = np.where(r.uniform(size=p0.size) < p0, 0, 1)            # y = 0 occurs with probability p0
+    under = metrics(y, p0 * 0.6)                                # P(y=0) too low -> intercept > 0
+    over = metrics(y, np.clip(p0 * 1.5, 0, 1))                  # P(y=0) too high -> intercept < 0
+    assert under["cal_intercept"] > 0.2 and over["cal_intercept"] < -0.2
+    assert metrics(y, p0)["prevalence_y0"] == pytest.approx((y == 0).mean())
+
+
+def test_reliability_table_observed_rate_is_y0():
+    from apf.evaluation import reliability_table
+    y = np.array([0, 0, 1, 1, 1, 1, 1, 1, 1, 1] * 10)
+    t = reliability_table(y, np.linspace(0.01, 0.99, 100), n_bins=5)
+    assert (t["n"] * t["observed_y0"]).sum() == pytest.approx((y == 0).sum())
+
+
+def test_logreg_applies_training_imputation_unchanged_to_new_data():
+    X, y = synth()
+    m = Mo.make_logreg(Mo.FULL_FEATURES, 1.0).fit(X.iloc[:2000], y[:2000])
+    train_med = X["median_gap_days"].iloc[:2000].median()
+    new = X.iloc[2000:2100].copy()
+    new["median_gap_days"] = 999.0                              # new data with a very different median
+    a = new.iloc[[0]].assign(median_gap_days=np.nan)            # missing -> must use the TRAIN median
+    b = new.iloc[[0]].assign(median_gap_days=train_med)
+    prep = m.named_steps["prep"]
+    ta, tb = prep.transform(a), prep.transform(b)
+    names = list(prep.get_feature_names_out())
+    keep = [i for i, n in enumerate(names) if "missingindicator" not in n]
+    assert np.allclose(ta[:, keep], tb[:, keep])
+    sc = prep.named_transformers_["log"].named_steps["scale"]
+    cols = prep.transformers_[0][2]
+    assert np.allclose(sc.mean_, np.log1p(X[cols].iloc[:2000]).mean().to_numpy())
+
+
+def test_no_class_weighting_anywhere():
+    assert Mo.make_logreg(Mo.FULL_FEATURES, 0.01).named_steps["lr"].class_weight is None
+    p = Mo.make_lgbm_refit({"num_leaves": 7, "min_child_samples": 200}, 114).get_params()
+    assert p["class_weight"] is None and "is_unbalance" not in p and "scale_pos_weight" not in p
+
+
+def test_reliability_table_keeps_ties_together_and_ignores_row_order():
+    from apf.evaluation import reliability_table
+    r = np.random.default_rng(2)
+    p0 = r.choice([0.05, 0.2, 0.6], 3000)                       # coarse score, like persistence
+    y = np.where(r.uniform(size=3000) < p0, 0, 1)
+    t = reliability_table(y, p0)
+    assert len(t) == 3 and sorted(t["mean_p0"].round(6)) == [0.05, 0.2, 0.6]
+    perm = r.permutation(3000)
+    pd.testing.assert_frame_equal(t, reliability_table(y[perm], p0[perm]))
+    cont = reliability_table(y, r.uniform(size=3000))
+    assert len(cont) == 10 and cont["n"].between(299, 301).all()
+
+
+def test_phase1_script_builds_labels_and_features_for_pre_test_cutoffs_only():
+    src = (Path(__file__).resolve().parents[1] / "scripts" / "stage_d_phase1.py").read_text()
+    tree = ast.parse(src)
+    calls = [n for n in ast.walk(tree) if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+             and n.func.id in ("build_panel", "build_feature_panel")]
+    assert len(calls) == 2 and all(isinstance(c.args[1], ast.Name) and c.args[1].id == "dev" for c in calls)
+    assert "dev = [c for c in C.CUTOFFS if c < min(TEST_CUTOFFS)]" in src
+    assert "rows_before_test(tab)" in src and "release_test_rows" not in src

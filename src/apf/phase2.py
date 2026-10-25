@@ -20,19 +20,25 @@ from .splits import REFIT_CUTOFFS, TEST_CUTOFFS, TRAIN_CUTOFFS
 
 SETS = {"temporal_test": "in_test_temporal", "holdout_test": "in_test_holdout",
         "holdout_train_period": "in_holdout_train_period"}
-COMPARISONS = [("C1", "M3_lgbm_full", "M2_lr_full", "primary"),
-               ("C2", "M2_lr_full", "M1_lr_rfm", "secondary"),
+# protocol v1.2 §8: estimate = model_a - model_b. Primary model = M2; strongest baseline = B2.
+COMPARISONS = [("P1", "M2_lr_full", "M1_lr_rfm", "primary"),
+               ("P2", "M3_lgbm_full", "M2_lr_full", "primary"),
+               ("P3", "M2_lr_full", "B2_recency", "primary"),
                ("C3", "M3_lgbm_full", "B2_recency", "secondary"),
-               ("C4", "M2_lr_full", "B2_recency", "secondary"),
                ("C5", "M3_lgbm_full", "B1_persistence", "secondary"),
                ("S-a", "M3_lgbm_full", "S2_lgbm_no_prev", "sensitivity"),
                ("S-b", "M2_lr_full", "S1_lr_no_prev", "sensitivity")]
+N_PRIMARY = sum(c[3] == "primary" for c in COMPARISONS)
+BONF_LO, BONF_HI = 100 * 0.05 / N_PRIMARY / 2, 100 - 100 * 0.05 / N_PRIMARY / 2   # 0.833 / 99.167
+STABILITY_MODELS = ["B0_prevalence", "B1_persistence", "B2_recency", "M1_lr_rfm", "M2_lr_full", "M3_lgbm_full"]
+TEST_SETS = ("temporal_test", "holdout_test")
 RESULT_FILE = "stage_d_test_metrics.csv"
 
 
 def _boot_fns():
     def ap(y, p, s):
-        return average_precision_score(event(y), s)
+        e = event(y)
+        return average_precision_score(e, s) if e.sum() > 0 else np.nan   # undefined without an event
 
     def auc(y, p, s):
         e = event(y)
@@ -100,7 +106,8 @@ def run_phase2(dev, test, configurations, B=1000, seed=20261024):
     final = {m: _Model(*s).fit(refit, refit["y"].to_numpy()) for m, s in specs.items()}
     phase1 = {m: _Model(*s).fit(train, train["y"].to_numpy()) for m, s in specs.items()}  # diagnostic
 
-    rows, rel, preds, draws_all, meta = [], [], [], {}, {"fit_rows": {}, "lightgbm_trees": {}}
+    rows, rel, preds, draws_all, cut_draws, meta = [], [], [], {}, [], {"fit_rows": {}, "lightgbm_trees": {}}
+    fns = _boot_fns()
     for set_name, S in sets.items():
         fitted = phase1 if set_name == "holdout_train_period" else final
         y, cut = S["y"].to_numpy(), S["cutoff"].to_numpy()
@@ -121,8 +128,14 @@ def run_phase2(dev, test, configurations, B=1000, seed=20261024):
             rel.append(rt.assign(set=set_name, model=m))
             preds.append(pd.DataFrame({ID: S[ID].to_numpy(), "cutoff": cut, "set": set_name, "model": m,
                                        "y": y, "p_no_purchase": p0, "score0": s0}))
-        d = paired_cluster_bootstrap(y, P, S[ID].to_numpy(), _boot_fns(), B=B, seed=seed)
+        d = paired_cluster_bootstrap(y, P, S[ID].to_numpy(), fns, B=B, seed=seed)
         draws_all[set_name] = d.assign(set=set_name)
+        if set_name in TEST_SETS:            # §6 temporal stability: AP intervals within each test cutoff
+            for c in sorted(set(cut)):
+                k = cut == c
+                dc = paired_cluster_bootstrap(y[k], {m: (P[m][0][k], P[m][1][k]) for m in STABILITY_MODELS},
+                                              S[ID].to_numpy()[k], {"ap_y0": fns["ap_y0"]}, B=B, seed=seed)
+                cut_draws.append(dc.assign(set=set_name, cutoff=str(pd.Timestamp(c).date())))
         meta["fit_rows"][set_name] = {m: mod.n_fit for m, mod in fitted.items()}
         meta["lightgbm_trees"][set_name] = {m: int(mod.m.booster_.current_iteration())
                                             for m, mod in fitted.items() if mod.kind == "lgbm"}
@@ -140,9 +153,12 @@ def run_phase2(dev, test, configurations, B=1000, seed=20261024):
             for metric in ("ap_y0", "roc_auc", "brier"):
                 diff = (w[a] - w[b]).xs(metric, level="metric").to_numpy()
                 lo, hi = percentile_ci(diff)
+                blo, bhi = percentile_ci(diff, BONF_LO, BONF_HI) if role == "primary" else (np.nan, np.nan)
                 comps.append({"set": set_name, "comparison": cid, "role": role, "model_a": a, "model_b": b,
                               "metric": metric, "estimate": float(pooled.loc[a, metric] - pooled.loc[b, metric]),
-                              "ci_low": lo, "ci_high": hi, "ci_excludes_0": bool(lo > 0 or hi < 0)})
+                              "ci_low": lo, "ci_high": hi, "ci_excludes_0": bool(lo > 0 or hi < 0),
+                              "bonf_ci_low": blo, "bonf_ci_high": bhi,
+                              "bonf_ci_excludes_0": bool(blo > 0 or bhi < 0) if role == "primary" else None})
     # temporal vs hold-out test, per model: unpaired (disjoint respondents, independent draws)
     tvh = []
     for m in specs:
@@ -154,11 +170,27 @@ def run_phase2(dev, test, configurations, B=1000, seed=20261024):
         lo, hi = percentile_ci(diff)
         tvh.append({"model": m, "ap_temporal": pt, "ap_holdout": ph, "difference": pt - ph,
                     "ci_low": lo, "ci_high": hi})
+    stability = temporal_stability(met, pd.concat(cut_draws, ignore_index=True))
     meta.update(B=B, seed=seed, rows={k: int(len(v)) for k, v in sets.items()},
                 refit_cutoffs=sorted(str(pd.Timestamp(c).date()) for c in set(refit["cutoff"])))
-    return {"metrics": met, "ci": ci, "comparisons": pd.DataFrame(comps),
+    return {"metrics": met, "ci": ci, "comparisons": pd.DataFrame(comps), "temporal_stability": stability,
+            "cutoff_draws": pd.concat(cut_draws, ignore_index=True),
             "temporal_vs_holdout": pd.DataFrame(tvh), "reliability": pd.concat(rel, ignore_index=True),
             "draws": draws, "predictions": pd.concat(preds, ignore_index=True), "meta": meta}
+
+
+def temporal_stability(met, cut_draws):
+    """§6 table: per test set, test cutoff and principal model."""
+    st = met[met["set"].isin(TEST_SETS) & (met["scope"] != "pooled") & met["model"].isin(STABILITY_MODELS)]
+    st = st.rename(columns={"scope": "cutoff"})[["set", "cutoff", "model", "n", "n_event_y0", "prevalence_y0",
+                                                 "ap_y0", "ap_no_skill", "cal_intercept"]].copy()
+    ci = (cut_draws.groupby(["set", "cutoff", "model"])["value"]
+          .apply(lambda v: pd.Series(percentile_ci(v.to_numpy()), index=["ap_ci_low", "ap_ci_high"]))
+          .unstack().reset_index())
+    st = st.merge(ci, on=["set", "cutoff", "model"], how="left", validate="one_to_one")
+    st["ap_minus_prevalence"] = st["ap_y0"] - st["prevalence_y0"]
+    st["ap_lift"] = st["ap_y0"] / st["prevalence_y0"]
+    return st.reset_index(drop=True)
 
 
 def load_table():
@@ -192,6 +224,13 @@ def main(out_dir=OUTPUT_DIR, B=1000, loader=None):
     res["comparisons"].to_csv(out_dir / "stage_d_comparisons.csv", index=False)
     res["temporal_vs_holdout"].to_csv(out_dir / "stage_d_temporal_vs_holdout.csv", index=False)
     res["reliability"].to_csv(out_dir / "stage_d_reliability.csv", index=False)
+    res["temporal_stability"].to_csv(out_dir / "stage_d_temporal_stability.csv", index=False)
+    res["cutoff_draws"].to_csv(out_dir / "stage_d_bootstrap_draws_by_cutoff.csv.gz", index=False, compression="gzip")
+    from .plots import plot_reliability, plot_temporal_stability
+    (out_dir / "figures").mkdir(exist_ok=True)
+    plot_temporal_stability(res["temporal_stability"], out_dir / "figures" / "stage_d_temporal_stability.png")
+    plot_reliability(res["reliability"][res["reliability"]["set"].isin(TEST_SETS)],
+                     out_dir / "figures" / "stage_d_reliability.png")
     res["draws"].to_csv(out_dir / "stage_d_bootstrap_draws.csv.gz", index=False, compression="gzip")
     res["predictions"].to_csv(out_dir / "stage_d_predictions.csv.gz", index=False, compression="gzip")
     (out_dir / "stage_d_phase2_meta.json").write_text(json.dumps(

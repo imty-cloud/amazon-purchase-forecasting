@@ -64,10 +64,15 @@ def calibration_intercept_slope(e, p0, eps=1e-6):
 
 
 def reliability_table(y, p0, n_bins=10):
-    """Quantile bins of p0: mean predicted vs observed rate of y = 0."""
+    """Quantile bins of p0 (by value): mean predicted vs observed rate of y = 0. Tied predictions always
+    share a bin, so coarse scores (e.g. persistence, 3 values) give fewer than `n_bins` bins and the table
+    does not depend on row order."""
     e = event(y)
-    d = pd.DataFrame({"p0": p0, "e": e})
-    d["bin"] = pd.qcut(d["p0"].rank(method="first"), n_bins, labels=False)
+    d = pd.DataFrame({"p0": np.asarray(p0, float), "e": e})
+    if d["p0"].nunique() <= n_bins:                 # coarse score: one bin per distinct prediction
+        d["bin"] = d["p0"].rank(method="dense").astype(int) - 1
+    else:
+        d["bin"] = pd.qcut(d["p0"], n_bins, labels=False, duplicates="drop")
     return d.groupby("bin").agg(n=("e", "size"), mean_p0=("p0", "mean"), observed_y0=("e", "mean"))
 
 

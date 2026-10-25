@@ -85,8 +85,10 @@ def test_main_end_to_end_then_refuses_second_run(monkeypatch, tmp_path):
     P2.main(out_dir=out, B=10, loader=lambda: synth_table(120, 3))
     for f in (P2.RESULT_FILE, "stage_d_comparisons.csv", "stage_d_temporal_vs_holdout.csv",
               "stage_d_reliability.csv", "stage_d_bootstrap_draws.csv.gz", "stage_d_predictions.csv.gz",
-              "stage_d_phase2_meta.json", "stage_d_test_metric_cis.csv"):
-        assert (out / f).exists(), f
+              "stage_d_phase2_meta.json", "stage_d_test_metric_cis.csv", "stage_d_temporal_stability.csv",
+              "stage_d_bootstrap_draws_by_cutoff.csv.gz", "figures/stage_d_temporal_stability.png",
+              "figures/stage_d_reliability.png"):
+        assert (out / f).exists() and (out / f).stat().st_size > 0, f
     assert json.loads((out / "stage_d_phase2_meta.json").read_text())["B"] == 10
     with pytest.raises(LockError, match="already"):
         P2.main(out_dir=out, loader=_never_load)
@@ -131,8 +133,11 @@ def test_evaluation_sets_and_metric_table(result):
 def test_comparisons_are_paired_and_predefined(result):
     res, _ = result
     c, d = res["comparisons"], res["draws"]
-    assert len(c) == 2 * 7 * 3 and set(c.loc[c["role"] == "primary", "comparison"]) == {"C1"}
-    row = c[(c["set"] == "temporal_test") & (c["comparison"] == "C1") & (c["metric"] == "ap_y0")].iloc[0]
+    assert len(c) == 2 * 7 * 3 and set(c.loc[c["role"] == "primary", "comparison"]) == {"P1", "P2", "P3"}
+    pairs = {r.comparison: (r.model_a, r.model_b) for r in c.itertuples()}
+    assert pairs["P1"] == ("M2_lr_full", "M1_lr_rfm") and pairs["P2"] == ("M3_lgbm_full", "M2_lr_full")
+    assert pairs["P3"] == ("M2_lr_full", "B2_recency")
+    row = c[(c["set"] == "temporal_test") & (c["comparison"] == "P2") & (c["metric"] == "ap_y0")].iloc[0]
     w = d[(d["set"] == "temporal_test") & (d["metric"] == "ap_y0")].pivot(index="draw", columns="model", values="value")
     diff = w["M3_lgbm_full"] - w["M2_lr_full"]
     assert row["ci_low"] == pytest.approx(np.percentile(diff, 2.5))
@@ -155,3 +160,71 @@ def test_run_phase2_deterministic():
     b = P2.run_phase2(rows_before_test(t), t[t["cutoff"].isin(TEST_CUTOFFS)], CONFIG, B=10, seed=2)
     pd.testing.assert_frame_equal(a["metrics"], b["metrics"])
     pd.testing.assert_frame_equal(a["comparisons"], b["comparisons"])
+
+
+def test_per_cutoff_prevalence_of_y0(result):
+    res, t = result
+    m = res["metrics"]
+    for set_name, role in (("temporal_test", "in_test_temporal"), ("holdout_test", "in_test_holdout")):
+        for c in TEST_CUTOFFS:
+            rows = t[t[role] & (t["cutoff"] == c)]
+            r = m[(m["set"] == set_name) & (m["scope"] == str(c.date())) & (m["model"] == "M2_lr_full")].iloc[0]
+            assert r["n"] == len(rows) and r["n_event_y0"] == int((rows["y"] == 0).sum())
+            assert r["prevalence_y0"] == pytest.approx((rows["y"] == 0).mean())
+            assert r["ap_no_skill"] == pytest.approx(r["prevalence_y0"])
+
+
+def test_bonferroni_intervals_for_primary_comparisons_only(result):
+    res, _ = result
+    c, d = res["comparisons"], res["draws"]
+    prim, other = c[c["role"] == "primary"], c[c["role"] != "primary"]
+    assert prim[["bonf_ci_low", "bonf_ci_high"]].notna().all().all()
+    assert other[["bonf_ci_low", "bonf_ci_high"]].isna().all().all()
+    assert (prim["bonf_ci_low"] <= prim["ci_low"]).all() and (prim["bonf_ci_high"] >= prim["ci_high"]).all()
+    row = prim[(prim["set"] == "holdout_test") & (prim["comparison"] == "P3") & (prim["metric"] == "ap_y0")].iloc[0]
+    w = d[(d["set"] == "holdout_test") & (d["metric"] == "ap_y0")].pivot(index="draw", columns="model", values="value")
+    diff = (w["M2_lr_full"] - w["B2_recency"]).to_numpy()
+    assert row["bonf_ci_low"] == pytest.approx(np.percentile(diff, 100 * 0.05 / 6))
+    assert row["bonf_ci_high"] == pytest.approx(np.percentile(diff, 100 - 100 * 0.05 / 6))
+
+
+def test_temporal_stability_table(result):
+    from apf.evaluation import paired_cluster_bootstrap
+    res, t = result
+    st, m = res["temporal_stability"], res["metrics"]
+    assert len(st) == 2 * 2 * 6 and set(st["model"]) == set(P2.STABILITY_MODELS)
+    assert set(st["cutoff"]) == {"2022-03-31", "2022-06-30"}
+    for r in st.itertuples():
+        ref = m[(m["set"] == r.set) & (m["scope"] == r.cutoff) & (m["model"] == r.model)].iloc[0]
+        assert (r.n, r.n_event_y0) == (ref["n"], ref["n_event_y0"])
+        assert r.ap_y0 == pytest.approx(ref["ap_y0"])
+        assert np.isclose(r.cal_intercept, ref["cal_intercept"], equal_nan=True)   # NaN for B0 (constant)
+        assert r.ap_minus_prevalence == pytest.approx(r.ap_y0 - r.prevalence_y0)
+        assert r.ap_lift == pytest.approx(r.ap_y0 / r.prevalence_y0)
+        assert r.ap_ci_low < r.ap_ci_high
+    b0 = st[st["model"] == "B0_prevalence"]
+    assert np.allclose(b0["ap_y0"], b0["prevalence_y0"]) and np.allclose(b0["ap_minus_prevalence"], 0)
+    # per-cutoff interval = respondents resampled within that cutoff only (B = 20, seed 1 in the fixture)
+    pr = res["predictions"]
+    k = pr[(pr["set"] == "temporal_test") & (pr["cutoff"] == pd.Timestamp("2022-06-30")) & (pr["model"] == "M2_lr_full")]
+    preds = {}
+    for mod in P2.STABILITY_MODELS:
+        g = pr[(pr["set"] == "temporal_test") & (pr["cutoff"] == pd.Timestamp("2022-06-30")) & (pr["model"] == mod)]
+        preds[mod] = (g["p_no_purchase"].to_numpy(), g["score0"].to_numpy())
+    dd = paired_cluster_bootstrap(k["y"].to_numpy(), preds, k[C.ID].to_numpy(),
+                                  {"ap_y0": P2._boot_fns()["ap_y0"]}, B=20, seed=1)
+    lo = np.percentile(dd[dd["model"] == "M2_lr_full"]["value"], 2.5)
+    row = st[(st["set"] == "temporal_test") & (st["cutoff"] == "2022-06-30") & (st["model"] == "M2_lr_full")].iloc[0]
+    assert row["ap_ci_low"] == pytest.approx(lo)
+
+
+def test_reliability_outputs(result):
+    res, t = result
+    rel = res["reliability"]
+    for set_name, role in P2.SETS.items():
+        for mod in P2.STABILITY_MODELS:
+            g = rel[(rel["set"] == set_name) & (rel["model"] == mod)]
+            assert 1 <= len(g) <= 10 and g["n"].sum() == int(t[role].sum())
+            if mod == "B0_prevalence":
+                assert len(g) == 1                                  # constant prediction: one bin
+            assert (g["n"] * g["observed_y0"]).sum() == pytest.approx(int((t.loc[t[role], "y"] == 0).sum()))

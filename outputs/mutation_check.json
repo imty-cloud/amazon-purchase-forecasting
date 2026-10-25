@@ -4,172 +4,207 @@
   {
    "mutant": "none (control)",
    "tests_failed": false,
-   "pytest": "117 passed, 8 deselected in 10.50s"
+   "pytest": "127 passed, 8 deselected in 9.85s"
   },
   {
    "mutant": "window end c+89",
    "tests_failed": true,
-   "pytest": "8 failed, 109 passed, 8 deselected in 10.72s"
+   "pytest": "8 failed, 119 passed, 8 deselected in 9.95s"
   },
   {
    "mutant": "window includes cutoff day",
    "tests_failed": true,
-   "pytest": "9 failed, 108 passed, 8 deselected in 10.78s"
+   "pytest": "9 failed, 118 passed, 8 deselected in 9.96s"
   },
   {
    "mutant": "history excludes cutoff day",
    "tests_failed": true,
-   "pytest": "8 failed, 109 passed, 8 deselected in 8.60s"
+   "pytest": "8 failed, 119 passed, 8 deselected in 8.10s"
   },
   {
    "mutant": "completeness guard off by one",
    "tests_failed": true,
-   "pytest": "1 failed, 116 passed, 8 deselected in 10.94s"
+   "pytest": "1 failed, 126 passed, 8 deselected in 9.97s"
   },
   {
    "mutant": "no START filter",
    "tests_failed": true,
-   "pytest": "2 failed, 115 passed, 8 deselected in 10.65s"
+   "pytest": "2 failed, 125 passed, 8 deselected in 9.99s"
   },
   {
    "mutant": "duplicates keyed on 7 columns",
    "tests_failed": true,
-   "pytest": "1 failed, 116 passed, 8 deselected in 10.83s"
+   "pytest": "1 failed, 126 passed, 8 deselected in 10.13s"
   },
   {
    "mutant": "gift title rule case-sensitive",
    "tests_failed": true,
-   "pytest": "1 failed, 116 passed, 8 deselected in 10.89s"
+   "pytest": "1 failed, 126 passed, 8 deselected in 10.13s"
   },
   {
    "mutant": "survey guard disabled",
    "tests_failed": true,
-   "pytest": "2 failed, 115 passed, 8 deselected in 11.09s"
+   "pytest": "2 failed, 125 passed, 8 deselected in 10.16s"
   },
   {
    "mutant": "panel keeps input columns",
    "tests_failed": true,
-   "pytest": "1 failed, 116 passed, 8 deselected in 11.24s"
+   "pytest": "1 failed, 126 passed, 8 deselected in 10.20s"
   },
   {
    "mutant": "features read all data, not history",
    "tests_failed": true,
-   "pytest": "9 failed, 108 passed, 8 deselected in 8.47s"
+   "pytest": "9 failed, 118 passed, 8 deselected in 8.13s"
   },
   {
    "mutant": "trailing window one day too long",
    "tests_failed": true,
-   "pytest": "7 failed, 110 passed, 8 deselected in 9.13s"
+   "pytest": "7 failed, 120 passed, 8 deselected in 8.55s"
   },
   {
    "mutant": "categories_365 one day too long",
    "tests_failed": true,
-   "pytest": "4 failed, 113 passed, 8 deselected in 10.28s"
+   "pytest": "4 failed, 123 passed, 8 deselected in 9.52s"
   },
   {
    "mutant": "categories counted after cutoff",
    "tests_failed": true,
-   "pytest": "8 failed, 109 passed, 8 deselected in 8.53s"
+   "pytest": "8 failed, 119 passed, 8 deselected in 8.21s"
   },
   {
    "mutant": "previous window includes c_prev",
    "tests_failed": true,
-   "pytest": "2 failed, 115 passed, 8 deselected in 10.53s"
+   "pytest": "2 failed, 125 passed, 8 deselected in 9.83s"
   },
   {
    "mutant": "missing prior outcome set to 0",
    "tests_failed": true,
-   "pytest": "1 failed, 116 passed, 8 deselected in 11.09s"
+   "pytest": "1 failed, 126 passed, 8 deselected in 10.30s"
   },
   {
    "mutant": "P(y=1) column returned as P(y=0)",
    "tests_failed": true,
-   "pytest": "5 failed, 112 passed, 8 deselected in 10.99s"
+   "pytest": "5 failed, 122 passed, 8 deselected in 10.36s"
   },
   {
    "mutant": "event coded as purchase",
    "tests_failed": true,
-   "pytest": "15 failed, 102 passed, 8 deselected in 10.90s"
+   "pytest": "19 failed, 108 passed, 8 deselected in 10.31s"
   },
   {
    "mutant": "row bootstrap instead of respondent",
    "tests_failed": true,
-   "pytest": "1 failed, 116 passed, 8 deselected in 11.20s"
+   "pytest": "1 failed, 126 passed, 8 deselected in 10.51s"
   },
   {
    "mutant": "hold-out respondents in train",
    "tests_failed": true,
-   "pytest": "3 failed, 111 passed, 8 deselected, 3 errors in 7.20s"
+   "pytest": "3 failed, 117 passed, 8 deselected, 7 errors in 6.31s"
   },
   {
    "mutant": "unseeded hold-out",
    "tests_failed": true,
-   "pytest": "1 failed, 116 passed, 8 deselected in 11.81s"
+   "pytest": "1 failed, 126 passed, 8 deselected in 9.94s"
   },
   {
    "mutant": "top-k ties broken by row order",
    "tests_failed": true,
-   "pytest": "2 failed, 115 passed, 8 deselected in 11.83s"
+   "pytest": "2 failed, 125 passed, 8 deselected in 9.90s"
   },
   {
    "mutant": "bootstrap not paired across models",
    "tests_failed": true,
-   "pytest": "1 failed, 116 passed, 8 deselected in 11.85s"
+   "pytest": "1 failed, 126 passed, 8 deselected in 9.88s"
   },
   {
    "mutant": "early-stopping metric targets y = 1",
    "tests_failed": true,
-   "pytest": "1 failed, 116 passed, 8 deselected in 12.21s"
+   "pytest": "1 failed, 126 passed, 8 deselected in 9.72s"
   },
   {
    "mutant": "refit ignores selected iterations",
    "tests_failed": true,
-   "pytest": "2 failed, 115 passed, 8 deselected in 38.47s"
+   "pytest": "2 failed, 125 passed, 8 deselected in 44.35s"
   },
   {
    "mutant": "lock ignores protocol changes",
    "tests_failed": true,
-   "pytest": "1 failed, 116 passed, 8 deselected in 10.00s"
+   "pytest": "1 failed, 126 passed, 8 deselected in 9.50s"
   },
   {
    "mutant": "lock ignores uncommitted code",
    "tests_failed": true,
-   "pytest": "1 failed, 116 passed, 8 deselected in 9.72s"
+   "pytest": "1 failed, 126 passed, 8 deselected in 9.29s"
   },
   {
    "mutant": "phase 1 can read test rows",
    "tests_failed": true,
-   "pytest": "4 failed, 110 passed, 8 deselected, 3 errors in 5.99s"
+   "pytest": "4 failed, 116 passed, 8 deselected, 7 errors in 5.59s"
   },
   {
    "mutant": "top-k ranked over pooled cutoffs",
    "tests_failed": true,
-   "pytest": "3 failed, 114 passed, 8 deselected in 9.51s"
+   "pytest": "3 failed, 124 passed, 8 deselected in 9.71s"
   },
   {
    "mutant": "top-k uses floor instead of ceiling",
    "tests_failed": true,
-   "pytest": "2 failed, 115 passed, 8 deselected in 9.61s"
+   "pytest": "2 failed, 125 passed, 8 deselected in 10.05s"
   },
   {
    "mutant": "top-k averages per-cutoff precision",
    "tests_failed": true,
-   "pytest": "1 failed, 116 passed, 8 deselected in 9.64s"
+   "pytest": "1 failed, 126 passed, 8 deselected in 10.14s"
   },
   {
    "mutant": "phase 2 loads data before the lock",
    "tests_failed": true,
-   "pytest": "4 failed, 113 passed, 8 deselected in 9.39s"
+   "pytest": "4 failed, 123 passed, 8 deselected in 10.46s"
   },
   {
    "mutant": "phase 2 refits on all pre-test rows",
    "tests_failed": true,
-   "pytest": "2 failed, 112 passed, 8 deselected, 3 errors in 6.08s"
+   "pytest": "2 failed, 118 passed, 8 deselected, 7 errors in 6.21s"
   },
   {
    "mutant": "phase 2 run-once guard removed",
    "tests_failed": true,
-   "pytest": "2 failed, 115 passed, 8 deselected in 9.00s"
+   "pytest": "2 failed, 125 passed, 8 deselected in 10.46s"
+  },
+  {
+   "mutant": "calibration intercept sign flipped",
+   "tests_failed": true,
+   "pytest": "2 failed, 125 passed, 8 deselected in 10.22s"
+  },
+  {
+   "mutant": "LR imputes by mean, not median",
+   "tests_failed": true,
+   "pytest": "2 failed, 125 passed, 8 deselected in 10.33s"
+  },
+  {
+   "mutant": "reliability bins split ties by row order",
+   "tests_failed": true,
+   "pytest": "2 failed, 125 passed, 8 deselected in 10.26s"
+  },
+  {
+   "mutant": "Bonferroni level left at 95 %",
+   "tests_failed": true,
+   "pytest": "1 failed, 126 passed, 8 deselected in 10.44s"
+  },
+  {
+   "mutant": "P3 compares LightGBM, not the primary model",
+   "tests_failed": true,
+   "pytest": "2 failed, 125 passed, 8 deselected in 10.26s"
+  },
+  {
+   "mutant": "per-cutoff AP CI uses all cutoffs",
+   "tests_failed": true,
+   "pytest": "2 failed, 125 passed, 8 deselected in 9.48s"
+  },
+  {
+   "mutant": "AP lift computed as a difference",
+   "tests_failed": true,
+   "pytest": "1 failed, 126 passed, 8 deselected in 9.12s"
   }
  ]
 }

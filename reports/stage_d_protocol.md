@@ -1,7 +1,7 @@
 # Stage D protocol — model selection, refitting and evaluation
 
-**Version 1.1 (2026-10-25; review changes in §12). Status: design approved; Phase 1 cleared to run;
-not locked.** No test metric has been computed.
+**Version 1.2 (2026-10-25; changes in §12). Status: approved; to be locked by a lock that supersedes the
+v1.1 lock (tag `stage-d-lock`).** No test label has been inspected and no test metric computed.
 
 **Purpose.** The protocol fixes every analysis choice before any tune or test result exists.
 - Once approved, the file is committed and its SHA-256 is written into `outputs/stage_d_locked_config.json`
@@ -23,6 +23,29 @@ Sources for all numbers quoted here: `outputs/stage_c_summary.json` and `outputs
   customer ID.
 - **Event of interest:** **y = 0**, no purchase day in days c+1 … c+90. This is not churn: 89 % of such
   observations buy again later (Stage B §8).
+- **Class convention (stored encoding unchanged: y = 1 means ≥ 1 purchase day).** y = 0 is the
+  *positive / event* class for:
+  - AP and its no-skill value (the prevalence of y = 0);
+  - ROC-AUC and Brier score;
+  - calibration;
+  - precision, recall and top-k;
+  - the prevalence baseline.
+
+  Every model and baseline outputs p0 = P(y = 0) (`evaluation.event`, `p_no_purchase`). Calibration regresses
+  1[y = 0] on logit p0:
+  - intercept **> 0** means p0 is too low on average (y = 0 *under*-predicted); **< 0** means it is too high;
+  - slope **< 1** means p0 is too extreme; **> 1** means it is too moderate.
+- **Label observability.**
+  - Exports run from 2018-01-01 to each participant's survey date, and the survey ran November 2022 – 20 March
+    2023 (Berke et al., 2024, Methods). Every history is therefore documented to cover days up to at least
+    2022-10-31.
+  - Every target window ends by 2022-09-28, at least 34 days before the earliest possible survey date.
+  - Per-respondent export dates are **not** in the data (`survey.csv` has no date field), so no individual
+    observation end is used.
+  - y = 0 means *no purchase recorded in this export*. It does not exclude purchases through other accounts
+    or retailers, or order types the export may omit.
+  - No eligibility filter on the last observed purchase is applied: such a filter conditions on future
+    behaviour and removes only y = 0 rows.
 - **Data version (primary):** all rows, with gift cards and exact duplicates kept. No other data version is
   analysed in Stage D unless approved separately (§11, D-Q4).
 
@@ -46,6 +69,21 @@ Hold-out: 1,002 of 5,008 respondents (20 %, seed 20261024, `apf.splits.holdout_r
   read from purchase history without any label. Hold-out rows are dropped before any fitting or scoring, and
   the train and tune counts are asserted equal to Stage C.
 - **Phase 2 (test)** starts only after the lock (§7).
+
+**Prevalence of y = 0 by cutoff, non-hold-out rows** (train and tune only; test cutoffs are reported by Phase 2):
+
+| Cutoff | 2018-12-31 | 2019-03-31 | 2019-06-30 | 2019-09-30 | 2019-12-31 | 2020-03-31 | 2020-06-30 | 2020-09-30 | 2020-12-31 | 2021-03-31 | 2021-06-30 (tune) | 2021-09-30 (tune) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Rows | 3,437 | 3,511 | 3,577 | 3,638 | 3,739 | 3,786 | 3,835 | 3,873 | 3,908 | 3,935 | 3,948 | 3,967 |
+| % y = 0 | 17.11 | 18.74 | 17.64 | 15.59 | 17.79 | 14.10 | 14.68 | 11.83 | 12.36 | 11.66 | 13.17 | 10.61 |
+
+**Estimands of the evaluation sets** (no new set is added):
+
+| Set | Respondents | Period | Measures |
+|---|---|---|---|
+| Temporal test (primary) | non-hold-out: seen in fitting | test cutoffs 2022-03-31, 2022-06-30 | generalisation to later quarters for the same panel members (the deployment case) |
+| Hold-out test | hold-out: never seen | the same test cutoffs | generalisation to later quarters **and** new respondents jointly. This is the future × unseen evaluation already in v1; nothing new is added |
+| Hold-out, training period (diagnostic) | hold-out | training cutoffs | generalisation to new respondents within already-seen quarters (person effect without the time shift) |
 
 ## 3. Models
 
@@ -137,7 +175,7 @@ Computed for every model on every evaluation set, pooled over the two test cutof
 | **AP for y = 0 (primary)** | `average_precision_score(y == 0, score0)`; reported with its no-skill value (prevalence of y = 0 in that set) |
 | ROC-AUC | for y = 0 vs score0 |
 | Brier score | mean (1[y = 0] − p0)²; Brier skill against the prevalence of y = 0 in the model's fitting set |
-| Calibration | slope (logistic recalibration on logit p0) and calibration-in-the-large intercept; reliability table and plot in deciles of p0 |
+| Calibration | slope (logistic recalibration on logit p0) and calibration-in-the-large intercept; reliability table and plot in deciles of p0 (by value; tied predictions share a bin) |
 | Precision and recall for y = 0 at **top 10 %** and **top 20 %** | within each cutoff, flag the ⌈k · n_c⌉ highest score0; ties at the threshold shared in expectation; counts pooled over cutoffs (`top_fraction_by_group`) |
 
 - **Top-k estimand** (`top_fraction_by_group`):
@@ -146,6 +184,16 @@ Computed for every model on every evaluation set, pooled over the two test cutof
     the expected count tp_c of flagged y = 0 rows;
   - across cutoffs, counts are pooled: precision = Σ tp_c / Σ k_c and recall = Σ tp_c / Σ events_c, not
     averages of per-cutoff rates.
+- **Temporal stability (per test cutoff).** For each test set and each test cutoff, a table reports:
+  - rows, y = 0 count and prevalence;
+  - AP for B0, B1, B2, M1, M2 and M3, with 95 % bootstrap intervals (respondents resampled within that
+    cutoff, B = 1,000, seed 20261024);
+  - AP − prevalence and AP / prevalence (lift over no skill);
+  - calibration-in-the-large (event y = 0; sign as in §1).
+
+  A two-panel plot shows AP per cutoff with the no-skill line, and calibration-in-the-large per cutoff.
+  Pooled metrics can hide variation between cutoffs, so both are reported. Two adjacent quarters (Q1 and Q2
+  2022) cannot establish long-term temporal stability.
 - **score0:** for B2 it is `recency_days`; for every other model it is p0. Brier and calibration use p0
   throughout, including B2's isotonic probabilities.
 - **No test-based tuning, threshold selection or recalibration.** The operating points are fixed fractions
@@ -174,6 +222,14 @@ Computed for every model on every evaluation set, pooled over the two test cutof
 
    It writes predictions, metrics and bootstrap draws to `outputs/stage_d_*`.
 5. **No re-runs with changed settings.** A re-run is permitted only to reproduce identical numbers.
+6. **Superseding a lock** (used once, for v1.1 → v1.2, before any test label was built):
+   - re-run Phase 1 under the new protocol; the selected configurations must be identical;
+   - commit the new protocol, code and Phase 1 outputs;
+   - write a new lock with `scripts/stage_d_write_lock.py --supersede "<reason>"`. It records the superseded
+     lock's protocol SHA-256, Phase 1 selection SHA-256, date and tag;
+   - commit the new lock.
+
+   The old lock stays in git history at its tag.
 
 ## 8. Uncertainty
 
@@ -188,13 +244,21 @@ Computed for every model on every evaluation set, pooled over the two test cutof
 
 | ID | Comparison | Role |
 |---|---|---|
-| C1 | M3 LightGBM full − M2 LR full | **primary model comparison** |
-| C2 | M2 LR full − M1 LR RFM | value of the added features (linear) |
-| C3 | M3 − B2 recency rule | gain over the simplest strong rule |
-| C4 | M2 − B2 recency rule | gain over the simplest strong rule (linear) |
-| C5 | M3 − B1 persistence | gain over persistence |
+| P1 | M2 LR full − M1 LR RFM | **primary**: value of the added features |
+| P2 | M3 LightGBM full − M2 LR full | **primary**: value of a non-linear model |
+| P3 | M2 LR full (primary model) − B2 recency rule (strongest baseline) | **primary**: gain over the strongest simple rule |
+| C3 | M3 − B2 recency rule | secondary |
+| C5 | M3 − B1 persistence | secondary |
 | S-a | M3 − S2 (with − without `prev_90d_active`) | sensitivity |
 | S-b | M2 − S1 | sensitivity |
+
+- **Primary model = M2** (logistic regression, full features). It is fixed here on grounds of simplicity and
+  interpretability, not tune performance:
+  - its tune AP (0.598) differs from LightGBM's (0.595) and from S1's (0.599) by at most 0.003, which is not
+    a basis for choosing;
+  - S1 is a sensitivity variant, not a candidate.
+- **Strongest baseline = B2** (recency rule), fixed from tune results before testing: tune AP 0.535 vs 0.350
+  for persistence and 0.119 for prevalence.
 
 - **Temporal vs hold-out test (per model).** These sets have disjoint respondents, so the comparison is
   unpaired. Their AP difference is estimated from independent bootstraps of the two sets. It is descriptive
@@ -202,8 +266,12 @@ Computed for every model on every evaluation set, pooled over the two test cutof
 - **Reading the intervals.**
   - A difference is described as supported when its 95 % interval excludes 0; otherwise "no clear
     difference".
-  - No equivalence claims are made, and there is no multiplicity adjustment. C1 is the only comparison
-    labelled primary; all others are secondary.
+  - No equivalence claims are made. A difference whose interval includes 0 is "not distinguishable from
+    zero with these data", not evidence of equivalence.
+  - For the three primary comparisons, 95 % intervals and Bonferroni-adjusted 98.33 % intervals are both
+    reported; secondary and sensitivity comparisons are unadjusted.
+  - A ±0.01 AP margin is **not** adopted as an equivalence margin: no external justification for it exists
+    here. It may be mentioned descriptively only.
 - **Not covered by these intervals:** uncertainty from the particular two test quarters (period-level shocks).
   This is stated as a limitation.
 
@@ -232,7 +300,10 @@ Computed for every model on every evaluation set, pooled over the two test cutof
 - `stage_d_tune_results.csv`: full grids.
 - `stage_d_locked_config.json`.
 - `stage_d_test_metrics.csv`: model × set × cutoff × metric, with CIs.
-- `stage_d_comparisons.csv`.
+- `stage_d_comparisons.csv`: P1–P3 with 95 % and Bonferroni 98.33 % intervals; secondary and sensitivity
+  comparisons with 95 % intervals.
+- `stage_d_temporal_stability.csv`: per test set and test cutoff (§6).
+- Figures `outputs/figures/stage_d_temporal_stability.png` and `outputs/figures/stage_d_reliability.png`.
 - `stage_d_bootstrap_draws.csv.gz`.
 - `stage_d_predictions.csv.gz`: row-level, git-ignored.
 - Reliability plots.
@@ -247,6 +318,21 @@ Computed for every model on every evaluation set, pooled over the two test cutof
 4. **D-Q4.** The no-gift-card sensitivity analysis is excluded for now.
 
 ## 12. Change log
+
+**v1.1 → v1.2 (2026-10-25, before any test label was built; approved).**
+- §1: class convention (y = 0 as the event, calibration sign rules) and label observability stated.
+- §2: per-cutoff prevalence of y = 0 for train and tune, and the estimand of each evaluation set.
+- §6: temporal-stability table and plot per test cutoff, with per-cutoff AP intervals.
+- §6: reliability deciles are formed by predicted value, so tied predictions always share a bin and the
+  table does not depend on row order. A score with at most 10 distinct values gets one bin per value
+  (persistence: 3; prevalence: 1). This is a correction found when reviewing the reliability figure on
+  synthetic data.
+- §8: three primary comparisons (P1–P3), with the primary model and strongest baseline fixed before testing;
+  Bonferroni 98.33 % intervals for the primaries; no equivalence margin.
+- §7: superseding procedure (item 6). The v1.1 lock is superseded once; Phase 1 is re-run under v1.2 (the
+  selection must be identical).
+- §10: new outputs listed.
+- Unchanged: target, features, splits, hold-out, models, grids, selection rule, refit rule and other metrics.
 
 **v1 → v1.1 (2026-10-25, before any model was trained on the real data).**
 - `prev_quarter_active` renamed to `prev_90d_active`; the calculation is unchanged.
