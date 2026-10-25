@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -64,6 +65,15 @@ MUTANTS = [  # (name, file, original, mutated)
     ("lock ignores uncommitted code", "lock.py", "    if dirty:\n", "    if False:\n"),
     ("phase 1 can read test rows", "lock.py",
      'out = table[table["cutoff"] < min(TEST_CUTOFFS)]', 'out = table[table["cutoff"] <= max(TEST_CUTOFFS)]'),
+    # top-k estimand (protocol v1.1 §6)
+    ("top-k ranked over pooled cutoffs", "evaluation.py",
+     "parts = [top_fraction(y[g == v], s[g == v], frac) for v in pd.unique(g)]",
+     "parts = [top_fraction(y, s, frac)]"),
+    ("top-k uses floor instead of ceiling", "evaluation.py", "k = int(np.ceil(frac * len(e)))",
+     "k = max(int(np.floor(frac * len(e))), 1)"),
+    ("top-k averages per-cutoff precision", "evaluation.py",
+     '"precision_y0": float(tp / flagged), "recall_y0": float(tp / max(events, 1))}',
+     '"precision_y0": float(np.mean([p["precision_y0"] for p in parts])), "recall_y0": float(tp / max(events, 1))}'),
 ]
 
 
@@ -75,21 +85,24 @@ def run_tests(pythonpath):
     return r.returncode, r.stdout.strip().splitlines()[-1]
 
 
+def run_one(tmp, i, name, fn, a, b):
+    dst = Path(tmp) / f"m{i:02d}" / "src"                     # one copy per mutant (runs in parallel)
+    shutil.copytree(ROOT / "src", dst)
+    if fn:
+        p = dst / "apf" / fn
+        s = p.read_text()
+        assert s.count(a) == 1, (name, s.count(a))
+        p.write_text(s.replace(a, b))
+    code, last = run_tests(dst)
+    return {"mutant": name, "tests_failed": code != 0, "pytest": last}
+
+
 def main():
-    res = []
-    with tempfile.TemporaryDirectory() as tmp:
-        for name, fn, a, b in [("none (control)", None, None, None)] + MUTANTS:
-            dst = Path(tmp) / "src"
-            shutil.rmtree(dst, ignore_errors=True)
-            shutil.copytree(ROOT / "src", dst)
-            if fn:
-                p = dst / "apf" / fn
-                s = p.read_text()
-                assert s.count(a) == 1, (name, s.count(a))
-                p.write_text(s.replace(a, b))
-            code, last = run_tests(dst)
-            res.append({"mutant": name, "tests_failed": code != 0, "pytest": last})
-            print(f"{name:35s} {'CAUGHT' if code else 'not caught'}  {last}")
+    jobs = [("none (control)", None, None, None)] + MUTANTS
+    with tempfile.TemporaryDirectory() as tmp, ThreadPoolExecutor(max_workers=4) as ex:
+        res = list(ex.map(lambda ij: run_one(tmp, ij[0], *ij[1]), enumerate(jobs)))
+    for r in res:
+        print(f"{r['mutant']:37s} {'CAUGHT' if r['tests_failed'] else 'not caught'}  {r['pytest']}")
     ok = (not res[0]["tests_failed"]) and all(r["tests_failed"] for r in res[1:])
     (ROOT / "outputs" / "mutation_check.json").write_text(
         json.dumps({"all_mutants_caught_and_control_passes": ok, "results": res}, indent=1))

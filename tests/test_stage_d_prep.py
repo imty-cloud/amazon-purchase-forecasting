@@ -12,7 +12,8 @@ import pytest
 from apf import config as C
 from apf import lock as L
 from apf import models as Mo
-from apf.evaluation import metrics, p_no_purchase, paired_cluster_bootstrap, top_fraction
+from apf.evaluation import (metrics, p_no_purchase, paired_cluster_bootstrap, top_fraction,
+                            top_fraction_by_group)
 from apf.features import FEATURE_COLUMNS, previous_quarter_end
 from apf.splits import TEST_CUTOFFS
 
@@ -111,6 +112,49 @@ def test_top_fraction_ties_do_not_depend_on_row_order():
     b = top_fraction(y[perm], s[perm], 0.2)
     assert a == b and a["precision_y0"] == pytest.approx(0.25) and a["recall_y0"] == pytest.approx(0.25)
     assert a["tied_at_threshold"] == 4
+
+
+def test_top_fraction_by_group_flags_within_each_cutoff():
+    # each cutoff has one y = 0 row, ranked first within its cutoff; all of B's scores are below A's
+    y = np.array([0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+    s = np.r_[np.linspace(10, 9, 10), np.linspace(5, 4, 10)]
+    g = np.array(["A"] * 10 + ["B"] * 10)
+    r = top_fraction_by_group(y, s, g, 0.1)
+    assert r["flagged"] == 2                                   # one per cutoff
+    assert r["precision_y0"] == pytest.approx(1.0) and r["recall_y0"] == pytest.approx(1.0)
+    pooled = top_fraction(y, s, 0.1)                           # one ranking flags A's top two
+    assert pooled["precision_y0"] == pytest.approx(0.5) and pooled["recall_y0"] == pytest.approx(0.5)
+
+
+@pytest.mark.parametrize("n,frac,k", [(5000, 0.1, 500), (5000, 0.2, 1000), (3935, 0.1, 394),
+                                      (3935, 0.2, 787), (10, 0.1, 1), (7, 0.2, 2)])
+def test_top_fraction_k_is_exact_ceiling(n, frac, k):
+    y = np.ones(n, int); y[0] = 0
+    assert top_fraction(y, np.arange(n, dtype=float), frac)["flagged"] == k
+
+
+def test_top_fraction_by_group_pools_counts_not_rates():
+    # A: 10 rows, k=1, its top row is y=0 (precision 1). B: 30 rows, k=3, one y=0 among its top 3.
+    yA = np.r_[0, np.ones(9, int)]
+    yB = np.r_[1, 0, 1, np.ones(27, int)]
+    y, s = np.r_[yA, yB], np.r_[np.arange(10, 0, -1), np.arange(30, 0, -1)].astype(float)
+    g = np.array(["A"] * 10 + ["B"] * 30)
+    r = top_fraction_by_group(y, s, g, 0.1)
+    assert (r["flagged"], r["tp_expected"], r["events"]) == (4, 2.0, 2)
+    assert r["precision_y0"] == pytest.approx(2 / 4)          # pooled; mean of per-cutoff rates = 2/3
+    assert r["recall_y0"] == pytest.approx(1.0)
+
+
+def test_top_fraction_by_group_ties_and_empty_events():
+    # A: all 10 scores tied, 2 of them y=0, k=1 -> expected tp 0.2. B: no y=0 at all.
+    y = np.r_[0, 0, np.ones(8, int), np.ones(10, int)]
+    s = np.r_[np.full(10, 5.0), np.arange(10, dtype=float)]
+    g = np.array(["A"] * 10 + ["B"] * 10)
+    r = top_fraction_by_group(y, s, g, 0.1)
+    assert r["tp_expected"] == pytest.approx(0.2) and r["flagged"] == 2 and r["events"] == 2
+    assert r["precision_y0"] == pytest.approx(0.1) and r["recall_y0"] == pytest.approx(0.1)
+    perm = np.random.default_rng(1).permutation(20)
+    assert top_fraction_by_group(y[perm], s[perm], g[perm], 0.1) == r
 
 
 def test_paired_bootstrap_is_paired_and_by_respondent():

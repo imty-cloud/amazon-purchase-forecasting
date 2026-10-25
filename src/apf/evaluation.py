@@ -83,8 +83,24 @@ def top_fraction(y, score0, frac):
     above, at = s > t, s == t
     take = (k - above.sum()) / at.sum()             # share of tied rows that is flagged
     tp = (e[above] == 1).sum() + take * (e[at] == 1).sum()
-    return {"fraction": frac, "flagged": k, "tied_at_threshold": int(at.sum()),
-            "precision_y0": float(tp / k), "recall_y0": float(tp / max(e.sum(), 1))}
+    return {"fraction": frac, "flagged": k, "tied_at_threshold": int(at.sum()), "tp_expected": float(tp),
+            "events": int(e.sum()), "precision_y0": float(tp / k), "recall_y0": float(tp / max(e.sum(), 1))}
+
+
+def top_fraction_by_group(y, score0, groups, frac):
+    """Protocol §6 operating point.
+
+    Within each cutoff c (independently): rank by score0 and flag k_c = ceil(frac * n_c) rows, with
+    ties at the k-th score shared in expectation (as if broken at random). Across cutoffs, counts
+    are pooled: precision = sum(tp_c) / sum(k_c), recall = sum(tp_c) / sum(events_c), where tp_c is
+    the expected number of y = 0 rows flagged. Recall is 0 when a set has no y = 0 row."""
+    y, s, g = np.asarray(y), np.asarray(score0, float), np.asarray(groups)
+    parts = [top_fraction(y[g == v], s[g == v], frac) for v in pd.unique(g)]
+    tp = sum(p["tp_expected"] for p in parts)
+    flagged = sum(p["flagged"] for p in parts)
+    events = sum(p["events"] for p in parts)
+    return {"fraction": frac, "groups": len(parts), "flagged": int(flagged), "tp_expected": float(tp),
+            "events": int(events), "precision_y0": float(tp / flagged), "recall_y0": float(tp / max(events, 1))}
 
 
 def _clusters(groups):

@@ -1,7 +1,7 @@
 # Stage D protocol — model selection, refitting and evaluation
 
-**Version 1 (draft, 2026-10-24). Status: PROPOSED — not approved, not locked.**
-No model in this protocol has been trained on the real data. No tune or test metric has been computed.
+**Version 1.1 (2026-10-25; review changes in §12). Status: design approved; Phase 1 cleared to run;
+not locked.** No test metric has been computed.
 
 **Purpose.** The protocol fixes every analysis choice before any tune or test result exists.
 - Once approved, the file is committed and its SHA-256 is written into `outputs/stage_d_locked_config.json`
@@ -40,8 +40,11 @@ Hold-out: 1,002 of 5,008 respondents (20 %, seed 20261024, `apf.splits.holdout_r
 | Hold-out, training period (diagnostic) | hold-out | 2018-12-31 … 2021-03-31 | 9,271 | 1,376 | evaluation, after locking |
 
 **Phases and data access.**
-- **Phase 1 (selection)** reads only non-hold-out rows before 2022-03-31 (`apf.lock.rows_before_test`). It
-  never reads hold-out rows at any cutoff.
+- **Phase 1 (selection)** builds labels and features only for the 13 cutoffs before 2022-03-31 and keeps only
+  non-hold-out rows (`apf.lock.rows_before_test`). No test-cutoff label is constructed.
+- **Hold-out membership** is derived from respondent IDs alone: those with a purchase on or before 2022-06-30,
+  read from purchase history without any label. Hold-out rows are dropped before any fitting or scoring, and
+  the train and tune counts are asserted equal to Stage C.
 - **Phase 2 (test)** starts only after the lock (§7).
 
 ## 3. Models
@@ -72,6 +75,9 @@ are tuned with the same procedure as M2 and M3.
   - `cutoff_quarter`: one-hot with fixed categories 1–4 (first dropped);
   - L2 penalty, `max_iter` 5000, no class weights (probabilities stay on the observed scale).
 - **LightGBM:** raw features with native NaN handling and no class weights.
+- **Class imbalance** (y = 0 is about 13–15 %) is handled by the choice of metric (AP for the minority class,
+  plus calibration), not by weighting or resampling. Either would distort the probabilities that the Brier
+  score and calibration evaluate.
 
 ## 4. Phase 1 — model selection (non-hold-out rows only; fit on Train, score on Tune)
 
@@ -94,6 +100,9 @@ smaller C (stronger regularisation). A `ConvergenceWarning` makes that C ineligi
   - A test checks that LightGBM's best score equals our `metrics()` AP.
 - **Selection:** the configuration with the highest tune AP at its best iteration. Exact ties go to fewer
   `num_leaves`, then more `min_child_samples`.
+- **Recorded checks:**
+  - LightGBM's reported best score must equal our `metrics()` AP for every configuration;
+  - a best iteration at the 3000 cap is flagged and reported, with no change to the grid.
 - **Caveat:** early stopping and configuration choice share the Tune set, so tune AP is optimistic for LightGBM.
   Tune results are reported as *selection-set* results, never as performance estimates.
 
@@ -101,7 +110,9 @@ smaller C (stronger regularisation). A `ConvergenceWarning` makes that C ineligi
 No hyperparameters. They are fitted on Train for the tune report and on Refit for testing.
 
 ### 4.4 Reproducibility check of Phase 1
-Phase 1 is run twice. The selected configurations, best iterations and tune metrics must be identical; any
+Phase 1 (`scripts/stage_d_phase1.py`) is run twice, in separate processes. The two
+`stage_d_phase1_selection.json` files must be identical except for `run_started` and `runtime_seconds`, and
+the two `stage_d_tune_results.csv` files must be identical except for the per-fit `seconds` column. Any other
 difference stops Stage D.
 
 ## 5. Refitting (after selection, before testing)
@@ -127,8 +138,14 @@ Computed for every model on every evaluation set, pooled over the two test cutof
 | ROC-AUC | for y = 0 vs score0 |
 | Brier score | mean (1[y = 0] − p0)²; Brier skill against the prevalence of y = 0 in the model's fitting set |
 | Calibration | slope (logistic recalibration on logit p0) and calibration-in-the-large intercept; reliability table and plot in deciles of p0 |
-| Precision and recall for y = 0 at **top 10 %** and **top 20 %** | within each cutoff, flag the ⌈k · n_c⌉ highest score0; ties at the threshold shared in expectation; counts pooled over cutoffs |
+| Precision and recall for y = 0 at **top 10 %** and **top 20 %** | within each cutoff, flag the ⌈k · n_c⌉ highest score0; ties at the threshold shared in expectation; counts pooled over cutoffs (`top_fraction_by_group`) |
 
+- **Top-k estimand** (`top_fraction_by_group`):
+  - within each cutoff c, independently, flag k_c = ⌈f · n_c⌉ rows with the highest score0 (f = 0.10, 0.20);
+  - rows tied with the k_c-th score are flagged in expectation (as if ties were broken at random), giving
+    the expected count tp_c of flagged y = 0 rows;
+  - across cutoffs, counts are pooled: precision = Σ tp_c / Σ k_c and recall = Σ tp_c / Σ events_c, not
+    averages of per-cutoff rates.
 - **score0:** for B2 it is `recency_days`; for every other model it is p0. Brier and calibration use p0
   throughout, including B2's isotonic probabilities.
 - **No test-based tuning, threshold selection or recalibration.** The operating points are fixed fractions
@@ -136,11 +153,16 @@ Computed for every model on every evaluation set, pooled over the two test cutof
 
 ## 7. Locking and Phase 2 (test)
 
-1. **After Phase 1:** write `outputs/stage_d_locked_config.json` (`apf.lock.write_lock`). It contains:
+1. **Phase 1** writes the *candidate* selection `outputs/stage_d_phase1_selection.json` and
+   `outputs/stage_d_tune_results.csv`. These contain:
    - the selected C values, LightGBM configurations and best iterations;
    - all tune metrics and the full grid results;
-   - the protocol SHA-256, data MD5, package versions and seeds.
-2. **Report** the Phase 1 results to the project owner. Commit the lock only after approval.
+   - every warning, the protocol SHA-256 at run time, data MD5, package versions and seeds.
+
+   **The lock is not written.**
+2. **Report** the Phase 1 results to the project owner. Only after approval: write
+   `outputs/stage_d_locked_config.json` from the candidate selection (`apf.lock.write_lock`) and commit it
+   with the protocol and code.
 3. **Phase 2** loads test rows through `release_test_rows`. That call fails unless:
    - the lock exists;
    - the protocol hash matches;
@@ -216,13 +238,27 @@ Computed for every model on every evaluation set, pooled over the two test cutof
 - Reliability plots.
 - `reports/stage_d_results.md`, generated from these files.
 
-## 11. Decisions requested (D-Q)
+## 11. Decisions (recorded 2026-10-25)
 
-1. **D-Q1.** Approve this protocol as version 1: models, grids, selection rule, refit rule, operating points
-   and comparisons.
-2. **D-Q2.** Confirm C1 (LightGBM vs full logistic regression) as the single primary comparison.
-3. **D-Q3.** Approve the two-step gate: after Phase 1, report the selected configurations, and commit the lock
-   only on your approval.
-4. **D-Q4.** The no-gift-card sensitivity analysis (planned in Stage B) is **not** included. Decide whether to
-   add it as a re-run of M2 and M3 on `model_table_nogift` with the configurations selected here (no
-   re-tuning).
+1. **D-Q1.** Design kept as proposed; Phase 1 approved to run. Phase 2 needs a separate approval.
+2. **D-Q2.** C1 (LightGBM vs full logistic regression) is the single primary comparison.
+3. **D-Q3.** Two-phase gate kept: the lock is written and committed only after the Phase 1 results are
+   approved.
+4. **D-Q4.** The no-gift-card sensitivity analysis is excluded for now.
+
+## 12. Change log
+
+**v1 → v1.1 (2026-10-25, before any model was trained on the real data).**
+- `prev_quarter_active` renamed to `prev_90d_active`; the calculation is unchanged.
+- §2: Phase 1 data access made explicit. Labels are built only for the 13 pre-test cutoffs, and hold-out
+  membership comes from IDs, not labels.
+- §3: class-imbalance handling stated explicitly (no weighting or resampling).
+- §4.2: metric-agreement and iteration-cap checks recorded.
+- §4.4: the reproducibility comparison is defined.
+- §6: the top-k estimand is defined exactly (per-cutoff ranking, ceiling, expected handling of ties, pooled
+  counts). `top_fraction_by_group` was added because the code previously had only a single-set version, which
+  did not match the per-cutoff definition.
+- §7: Phase 1 writes a candidate selection; the lock follows approval.
+- §11: decisions recorded.
+
+No change to the question, target, features, splits, models, grids, selection rule or metrics.

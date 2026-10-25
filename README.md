@@ -21,7 +21,7 @@ Harvard Dataverse doi:10.7910/DVN/YGLYDY, v1.0).
 | A Audit and feasibility | Done: `reports/audit_and_feasibility.md` |
 | B Data and target validation | Done: `reports/stage_b_data_target_validation.md` (git tag `stage-b`) |
 | C Features, baselines, validation design | Done: `reports/stage_c_features_validation.md` |
-| D Modelling | Protocol proposed: `reports/stage_d_protocol.md`; no model trained (awaiting approval) |
+| D Modelling | Protocol v1.1 `reports/stage_d_protocol.md`; Phase 1 (selection) done: `reports/stage_d_phase1_results.md`; Phase 2 (test) not run |
 | E Report · F Reproducibility | Not started |
 
 ## Layout
@@ -57,8 +57,9 @@ cd "/Users/quynhtien/Documents/Đồ án dự kiến/amazon_purchase_forecasting
 .venv/bin/python -m pytest                          # all tests (about 10 s)
 .venv/bin/python scripts/stage_b_validate.py        # about 20 s; writes outputs/stage_b_*
 .venv/bin/python scripts/stage_c_features.py        # about 30 s; writes outputs/stage_c_*, model_table_*.csv.gz
-.venv/bin/python scripts/mutation_check.py          # about 15 min (27 mutants); outputs/mutation_check.json
+.venv/bin/python scripts/mutation_check.py          # about 1 min (30 mutants, 4 in parallel); outputs/mutation_check.json
 .venv/bin/python scripts/build_stage_c_report.py    # writes reports/stage_c_features_validation.md
+.venv/bin/python scripts/stage_d_phase1.py          # about 20 s; selection on Train -> Tune only (no test labels)
 ```
 
 `reports/stage_b_data_target_validation.md` is frozen at tag `stage-b`; `build_stage_b_report.py` regenerates it
