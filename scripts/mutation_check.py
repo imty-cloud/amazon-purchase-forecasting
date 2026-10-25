@@ -74,6 +74,14 @@ MUTANTS = [  # (name, file, original, mutated)
     ("top-k averages per-cutoff precision", "evaluation.py",
      '"precision_y0": float(tp / flagged), "recall_y0": float(tp / max(events, 1))}',
      '"precision_y0": float(np.mean([p["precision_y0"] for p in parts])), "recall_y0": float(tp / max(events, 1))}'),
+    # Phase 2
+    ("phase 2 loads data before the lock", "phase2.py",
+     "    payload = require_lock()                                   # 1. lock first, before any data",
+     "    (loader or load_table)()\n    payload = require_lock()"),
+    ("phase 2 refits on all pre-test rows", "phase2.py",
+     'refit, train = dev[dev["in_refit"]], dev[dev["in_train"]]', 'refit, train = dev, dev[dev["in_train"]]'),
+    ("phase 2 run-once guard removed", "phase2.py",
+     "    if (out_dir / RESULT_FILE).exists():", "    if False:"),
 ]
 
 
