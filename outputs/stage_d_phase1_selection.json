@@ -1,6 +1,6 @@
 {
- "run_started": "2026-10-25 10:28:15",
- "protocol_sha256_at_run": "2d5c3c18420f9dcab34f4a0932352f8953d38ac271fa006c7e9b2134b4826374",
+ "run_started": "2026-10-25 11:00:51",
+ "protocol_sha256_at_run": "6b3ac9b4aa4b358cb1efc22e2adf0c4a1dca5a10ba56cf19e10fc182f83cbb57",
  "data_md5": "3549d72735b1211ab009ff0177b94bd9",
  "environment": {
   "python": "3.14.7",
@@ -355,5 +355,5 @@
   "S1_lr_no_prev_mean_p0_tune": 0.1058722286709239,
   "M3_lgbm_full_mean_p0_tune": 0.11119949487090293
  },
- "runtime_seconds": 25.1
+ "runtime_seconds": 18.5
 }
