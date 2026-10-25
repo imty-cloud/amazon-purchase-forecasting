@@ -9,3 +9,6 @@ outputs/*.csv.gz
 amazon-purchases.csv
 survey.csv
 outputs/independent_features_sample.csv
+.vscode/
+.idea/
+*.swp
