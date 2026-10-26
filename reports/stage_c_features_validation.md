@@ -391,7 +391,7 @@ The current definition is kept for three reasons:
 ## 12. Reproduce
 
 ```bash
-cd "/Users/quynhtien/Documents/Đồ án dự kiến/amazon_purchase_forecasting"
+cd "<THU_MUC_DU_AN>"
 .venv/bin/python -m pytest                          # 107 passed
 .venv/bin/python scripts/stage_c_features.py        # outputs/stage_c_*, model_table_*.csv.gz
 .venv/bin/python scripts/mutation_check.py          # Stage B + C mutants

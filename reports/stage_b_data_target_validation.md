@@ -25,7 +25,7 @@ model was trained.
 
 ## 2. Data source and observation period
 
-- File: `/Users/quynhtien/Documents/Đồ án dự kiến/amazon-purchases.csv`, read in place in 250,000-row chunks as text. Reduced in-memory table:
+- File: `<DUONG_DAN_DU_LIEU>/amazon-purchases.csv`, read in place in 250,000-row chunks as text. Reduced in-memory table:
   69.3 MB. The file is never copied or written. A test checks that its size and
   modification time are unchanged after loading.
 - MD5 `3549d72735b1211ab009ff0177b94bd9` = official Dataverse v1.0 checksum (doi:10.7910/DVN/YGLYDY).
@@ -294,7 +294,7 @@ All 15 per-cutoff (n, y = 1, y = 0) triples and the totals are identical (§5). 
 ## 12. Reproduce
 
 ```bash
-cd "/Users/quynhtien/Documents/Đồ án dự kiến/amazon_purchase_forecasting"
+cd "<THU_MUC_DU_AN>"
 /Library/Frameworks/Python.framework/Versions/3.14/bin/python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.lock.txt
 .venv/bin/python -m pytest                          # 56 tests, incl. 5 on the real CSV

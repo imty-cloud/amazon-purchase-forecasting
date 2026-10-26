@@ -291,7 +291,7 @@ All 15 per-cutoff (n, y = 1, y = 0) triples and the totals are identical (§5). 
 ## 12. Reproduce
 
 ```bash
-cd "/Users/quynhtien/Documents/Đồ án dự kiến/amazon_purchase_forecasting"
+cd "<THU_MUC_DU_AN>"
 /Library/Frameworks/Python.framework/Versions/3.14/bin/python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.lock.txt
 .venv/bin/python -m pytest                          # 56 tests, incl. 5 on the real CSV

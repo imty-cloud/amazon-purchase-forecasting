@@ -29,7 +29,7 @@ Không sửa file nào khác. Repository gốc không bị thay đổi.
 
 ## Hạn chế còn lại
 - `check_stage_d_report.py` không chạy trọn vẹn trong bản nộp: cần ba file hàng-từng-người bị loại khỏi Git (thiếu file thì báo `FileNotFoundError`). Đã chạy thành công trên repository gốc. Không sửa checker để không làm yếu kiểm tra.
-- Đường dẫn tuyệt đối của máy tác giả (`/Users/quynhtien/...`) còn trong 5 file đã commit (README cũ, báo cáo Stage A/B/C, hai script build Stage B/C, `stage_b_validation_summary.json`). Không viết lại lịch sử. Mã định danh người trả lời không bị lộ trong repository.
+- Đường dẫn tuyệt đối của máy tác giả đã được thay bằng ký hiệu chung (`<THU_MUC_DU_AN>`, `<DUONG_DAN_DU_LIEU>`) trong các báo cáo, hai script build Stage B/C và `stage_b_validation_summary.json`; các commit cũ vẫn giữ nguyên, không viết lại lịch sử. Mã định danh người trả lời không bị lộ trong repository.
 - Giữ nguyên tag và `.git`: provenance của báo cáo dùng `stage-d-lock-v1.2^{commit}`.
 - Python 3.14 mới; người chấm cần cài Python 3.14. Chưa kiểm tra cài mới trên máy khác.
 - Các điểm không nhất quán đã biết trong giao thức (§8 so với §11, §9) được ghi nhận, không sửa.

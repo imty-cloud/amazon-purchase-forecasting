@@ -10,7 +10,7 @@ Models and Temporal Stability Assessment
 
 | Resource | Path | Access | Notes |
 |---|---|---|---|
-| Parent folder | `/Users/quynhtien/Documents/Đồ án dự kiến/` | read | |
+| Parent folder | `<THU_MUC_CHA>/` | read | |
 | Raw purchases | `…/amazon-purchases.csv` (313,070,173 B) | read | MD5 `3549d72735b1211ab009ff0177b94bd9` = official Dataverse v1.0 |
 | Survey | `…/survey.csv` (5,027 rows) | read | Demographics, collected 2022–23 |
 | Data dictionary | `…/fields.csv` | read | Survey question texts only; no purchase-column dictionary |
@@ -218,7 +218,7 @@ Estimated runtime for Stage D: minutes (71k rows × ~30 features).
 ## 10. Finalisation and reassessment (2026-10-24, before Stage B)
 
 **Decisions received.**
-- The project was created at `/Users/quynhtien/Documents/Đồ án dự kiến/amazon_purchase_forecasting/`.
+- The project was created at `<THU_MUC_DU_AN>/`.
 - Gift cards are **kept in the primary analysis**, with a sensitivity check that excludes them.
 - Stage B was approved. Stages C–F are not.
 

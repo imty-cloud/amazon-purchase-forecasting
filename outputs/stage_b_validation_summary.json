@@ -1,6 +1,6 @@
 {
  "run_started": "2026-10-24 21:32:36",
- "data_path": "/Users/quynhtien/Documents/\u0110o\u0302\u0300 a\u0301n du\u031b\u0323 kie\u0302\u0301n/amazon-purchases.csv",
+ "data_path": "<DUONG_DAN_DU_LIEU>/amazon-purchases.csv",
  "config": {
   "START": "2018-01-01",
   "OBSERVED_THROUGH": "2022-10-31",
