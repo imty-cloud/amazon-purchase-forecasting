@@ -45,26 +45,8 @@ python3.14 -m venv .venv
 .venv/bin/python -m pip install -r requirements.lock.txt
 ```
 
-## 4. Lấy dữ liệu và kiểm tra MD5
-
-Dữ liệu **không** nằm trong repository này. Bộ dữ liệu công khai: Open e-commerce 1.0 (Berke và cs., 2024, *Scientific Data* 11, 491,
-doi:10.1038/s41597-024-03329-6; Harvard Dataverse doi:10.7910/DVN/YGLYDY, phiên bản 1.0). Tải hai file `amazon-purchases.csv` và
-`survey.csv` về cùng một thư mục (giấy phép và điều khoản theo trang Dataverse), rồi trỏ tới thư mục đó:
-
-```bash
-export APF_DATA_DIR="/duong/dan/den/thu/muc/chua/csv"
-```
-
-Nếu không đặt biến này, code tìm ở thư mục cha của repository (`config.py`).
-
-MD5 mong đợi (từ `src/apf/config.py`):
-- `amazon-purchases.csv`: `3549d72735b1211ab009ff0177b94bd9`
-- `survey.csv`: `8340a44a5691c3763702683155cb5cc7`
-
-```bash
-python3 -c "import hashlib,sys;print(hashlib.md5(open(sys.argv[1],'rb').read()).hexdigest())" "$APF_DATA_DIR/amazon-purchases.csv"
-```
-(Cũng có thể dùng `md5 -q` trên macOS hoặc `md5sum` trên Linux.) Stage B và C dừng bằng `assert` nếu MD5 không khớp.
+## 4. Dữ liệu
+Dữ liệu **không** nằm trong repository này. Bộ dữ liệu công khai: [Open e-commerce 1.0](https://doi.org/10.7910/DVN/YGLYDY) (Berke và cs., 2024, *Scientific Data* 11, 491, [doi:10.1038/s41597-024-03329-6](https://doi.org/10.1038/s41597-024-03329-6); Harvard Dataverse [doi:10.7910/DVN/YGLYDY](https://doi.org/10.7910/DVN/YGLYDY), phiên bản 1.0). Tải hai file `amazon-purchases.csv` và `survey.csv` về cùng một thư mục (giấy phép và điều khoản theo trang Dataverse), rồi trỏ tới thư mục đó:
 
 ## 5. Thứ tự chạy
 
