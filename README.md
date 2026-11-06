@@ -46,8 +46,7 @@ python3.14 -m venv .venv
 ```
 
 ## 4. Dữ liệu
-Dữ liệu **không** nằm trong repository này. Bộ dữ liệu công khai: [Open e-commerce 1.0](https://doi.org/10.7910/DVN/YGLYDY) (Berke và cs., 2024, *Scientific Data* 11, 491, [doi:10.1038/s41597-024-03329-6](https://doi.org/10.1038/s41597-024-03329-6); Harvard Dataverse [doi:10.7910/DVN/YGLYDY](https://doi.org/10.7910/DVN/YGLYDY), phiên bản 1.0). Tải hai file `amazon-purchases.csv` và `survey.csv` về cùng một thư mục (giấy phép và điều khoản theo trang Dataverse), rồi trỏ tới thư mục đó:
-
+Dữ liệu **không** nằm trong repository này. Bộ dữ liệu công khai: [Open e-commerce 1.0](https://doi.org/10.7910/DVN/YGLYDY) (Berke và cs., 2024, *Scientific Data* 11, 491, [doi:10.1038/s41597-024-03329-6](https://doi.org/10.1038/s41597-024-03329-6); Harvard Dataverse [doi:10.7910/DVN/YGLYDY](https://doi.org/10.7910/DVN/YGLYDY), phiên bản 1.0). Bài sử dụng hai file `amazon-purchases.csv` và `survey.csv` .
 ## 5. Thứ tự chạy
 
 Repository đã chứa kết quả của tất cả các bước. **Không chạy lại ở thư mục này**, vì các bước B, C và Phase 1 ghi đè file đã commit. Nếu muốn
