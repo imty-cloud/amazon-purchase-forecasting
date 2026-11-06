@@ -1,6 +1,6 @@
 # Dự báo hoạt động mua hàng trong tương lai từ dữ liệu giao dịch thương mại điện tử
 
-*So sánh các mô hình học máy và đánh giá độ ổn định theo thời gian* 
+*So sánh các mô hình học máy và đánh giá độ ổn định theo thời gian ngắn hạn*
 
 ## 1. Mục tiêu và câu hỏi nghiên cứu
 
