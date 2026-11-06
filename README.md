@@ -75,7 +75,7 @@ chạy lại, hãy làm trên một bản clone tạm và so sánh bằng `git d
 - `stage_d_write_lock.py` và `stage_d_phase2.py` gọi `git status` trong thư mục dự án (`src/apf/lock.py`), nên phải chạy trong một **repository Git**. Giữ thư mục `.git`.
 - Phase 2 (`src/apf/phase2.py`) chỉ chạy khi: (a) có file khóa; (b) SHA-256 của `reports/stage_d_protocol.md` khớp file khóa; (c) `src/`, `scripts/`, giao thức và file khóa đã commit và không bị sửa; (d) file selection Phase 1 khớp checksum trong khóa; (e) `outputs/stage_d_test_metrics.csv` **chưa tồn tại**.
 - Điều kiện (e) nghĩa là Phase 2 đã chạy đúng một lần và sẽ từ chối chạy lại. **Đừng xóa file kết quả hay sửa code để vượt qua chốt này**: làm vậy làm mất giá trị của đánh giá test.
-- Các tag ghi nhận mốc kiểm toán: `stage-b`, `stage-c`, `stage-d-lock`, `stage-d-lock-v1.2` (khóa dùng cho Phase 2 nằm ở commit `dc88321`; kết quả ở commit `d7dbb22`). Code không đọc tag khi chạy, nhưng `build_stage_d_report.py` và file provenance dùng `stage-d-lock-v1.2^{commit}`. Hãy giữ nguyên tag và lịch sử.
+- Các tag ghi nhận mốc kiểm toán: `stage-b`, `stage-c`, `stage-d-lock`, `stage-d-lock-v1.2` (khóa dùng cho Phase 2 nằm ở commit `8d904e6`; kết quả ở commit `099ab37`). Code không đọc tag khi chạy, nhưng `build_stage_d_report.py` và file provenance dùng `stage-d-lock-v1.2^{commit}`. Hãy giữ nguyên tag và lịch sử.
 - Ba file hàng-từng-người của Phase 2 (`stage_d_predictions.csv.gz`, hai file bootstrap) bị git bỏ qua vì chứa mã người trả lời, nên **không có** trong repository. Vì vậy `check_stage_d_report.py` không chạy trọn vẹn ở đây (xem mục 9).
 
 ## 8. Đã chạy thực tế và chỉ kiểm tra tĩnh
