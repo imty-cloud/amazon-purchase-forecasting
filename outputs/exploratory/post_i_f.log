@@ -1,0 +1,180 @@
+[   0.0 min] done M2_lr_full
+[   0.0 min] done M3_lgbm_full
+[   0.0 min] done M2_tenure_norm_keep
+[   0.0 min] done M2_tenure_norm_drop
+[   0.0 min] done M2_window4q
+[   0.0 min] done M3_window4q
+[   0.0 min] done M2_window6q
+[   0.0 min] done M3_window6q
+[   0.0 min] ngưỡng tam phân vị tenure_days trên Train: 533.0 821.0
+[   0.4 min] bootstrap xong temporal_test
+[   0.5 min] bootstrap xong holdout_test
+[   0.8 min] bootstrap xong tune
+              set                model     n  prevalence_y0   ap_y0  roc_auc   brier  cal_intercept  cal_slope  mean_pred_p0
+0            tune           M2_lr_full  7915         0.1189  0.5977   0.9209  0.0675         0.2110     1.0814        0.1050
+1   temporal_test           M2_lr_full  8005         0.1270  0.5966   0.9185  0.0714         0.2043     1.0587        0.1129
+2    holdout_test           M2_lr_full  2004         0.1243  0.6110   0.9207  0.0698         0.2250     1.0564        0.1092
+3            tune         M3_lgbm_full  7915         0.1189  0.5953   0.9196  0.0676         0.1080     1.1745        0.1112
+4   temporal_test         M3_lgbm_full  8005         0.1270  0.6045   0.9207  0.0708         0.1735     1.1746        0.1144
+5    holdout_test         M3_lgbm_full  2004         0.1243  0.6157   0.9242  0.0691         0.2037     1.1807        0.1098
+6            tune  M2_tenure_norm_keep  7915         0.1189  0.5902   0.9200  0.0678         0.1972     1.0749        0.1058
+7   temporal_test  M2_tenure_norm_keep  8005         0.1270  0.5999   0.9181  0.0714         0.1825     1.0548        0.1144
+8    holdout_test  M2_tenure_norm_keep  2004         0.1243  0.6134   0.9207  0.0697         0.2053     1.0562        0.1104
+9            tune  M2_tenure_norm_drop  7915         0.1189  0.5888   0.9196  0.0675         0.0573     1.0766        0.1150
+10  temporal_test  M2_tenure_norm_drop  8005         0.1270  0.6002   0.9176  0.0711         0.0677     1.0508        0.1223
+11   holdout_test  M2_tenure_norm_drop  2004         0.1243  0.6092   0.9196  0.0697         0.0940     1.0472        0.1178
+12           tune          M2_window4q  7915         0.1189  0.5985   0.9209  0.0673         0.1475     1.0861        0.1090
+13  temporal_test          M2_window4q  8005         0.1270  0.5945   0.9180  0.0711         0.0743     1.0568        0.1218
+14   holdout_test          M2_window4q  2004         0.1243  0.6072   0.9202  0.0697         0.0973     1.0533        0.1176
+15           tune          M3_window4q  7915         0.1189  0.5829   0.9189  0.0676         0.0576     1.1214        0.1148
+16  temporal_test          M3_window4q  8005         0.1270  0.6119   0.9204  0.0701         0.1143     1.1503        0.1187
+17   holdout_test          M3_window4q  2004         0.1243  0.6196   0.9219  0.0692         0.1572     1.1387        0.1132
+18           tune          M2_window6q  7915         0.1189  0.6001   0.9208  0.0674         0.1735     1.1019        0.1073
+19  temporal_test          M2_window6q  8005         0.1270  0.5951   0.9180  0.0711         0.0731     1.0585        0.1219
+20   holdout_test          M2_window6q  2004         0.1243  0.6059   0.9202  0.0697         0.0998     1.0579        0.1174
+21           tune          M3_window6q  7915         0.1189  0.5898   0.9189  0.0676         0.0872     1.1475        0.1127
+22  temporal_test          M3_window6q  8005         0.1270  0.6096   0.9205  0.0703         0.0778     1.1592        0.1213
+23   holdout_test          M3_window6q  2004         0.1243  0.6197   0.9229  0.0689         0.1177     1.1549        0.1158
+              set         model                 by        group     n  n_event_y0  prevalence_y0  mean_pred_p0   ap_y0  roc_auc   brier  cal_intercept  cal_slope
+0            tune    M2_lr_full             tenure  T1 (<=533d)   375         122         0.3253        0.2660  0.6373   0.8383  0.1589         0.4203     0.9315
+1            tune    M2_lr_full             tenure  T2 (<=821d)   451         103         0.2284        0.2121  0.6002   0.8827  0.1166         0.1392     1.1189
+2            tune    M2_lr_full             tenure   T3 (>821d)  7089         716         0.1010        0.0896  0.5881   0.9222  0.0595         0.1940     1.0895
+3            tune    M2_lr_full  n_cutoffs_present          1-9   343         107         0.3120        0.2608  0.6382   0.8459  0.1523         0.3659     0.9757
+4            tune    M2_lr_full  n_cutoffs_present        10-14   698         172         0.2464        0.2087  0.6287   0.8735  0.1261         0.3200     1.0235
+5            tune    M2_lr_full  n_cutoffs_present           15  6874         662         0.0963        0.0867  0.5806   0.9227  0.0573         0.1700     1.0900
+6   temporal_test    M2_lr_full             tenure  T1 (<=533d)   213          65         0.3052        0.2696  0.5794   0.7979  0.1673         0.2389     0.8802
+7   temporal_test    M2_lr_full             tenure  T2 (<=821d)   268          85         0.3172        0.2471  0.6946   0.8618  0.1471         0.5609     0.8759
+8   temporal_test    M2_lr_full             tenure   T3 (>821d)  7524         867         0.1152        0.1037  0.5873   0.9211  0.0660         0.1782     1.0718
+9   temporal_test    M2_lr_full  n_cutoffs_present          1-9   433         136         0.3141        0.2592  0.6200   0.8180  0.1643         0.3996     0.8049
+10  temporal_test    M2_lr_full  n_cutoffs_present        10-14   698         170         0.2436        0.2080  0.6519   0.8804  0.1188         0.3196     0.9744
+11  temporal_test    M2_lr_full  n_cutoffs_present           15  6874         711         0.1034        0.0941  0.5764   0.9241  0.0608         0.1557     1.0920
+12   holdout_test    M2_lr_full             tenure  T1 (<=533d)    59          18         0.3051        0.2435  0.6796   0.8266  0.1602         0.4439     0.9087
+13   holdout_test    M2_lr_full             tenure  T2 (<=821d)    73          21         0.2877        0.2238  0.6717   0.8553  0.1423         0.5609     0.8172
+14   holdout_test    M2_lr_full             tenure   T3 (>821d)  1872         210         0.1122        0.1005  0.6089   0.9236  0.0642         0.1867     1.0729
+15   holdout_test    M2_lr_full  n_cutoffs_present          1-9   120          36         0.3000        0.2459  0.6887   0.8618  0.1420         0.4187     0.9761
+16   holdout_test    M2_lr_full  n_cutoffs_present        10-14   196          46         0.2347        0.1968  0.6702   0.8810  0.1188         0.3521     0.9812
+17   holdout_test    M2_lr_full  n_cutoffs_present           15  1688         167         0.0989        0.0893  0.5829   0.9237  0.0590         0.1676     1.0660
+18           tune  M3_lgbm_full             tenure  T1 (<=533d)   375         122         0.3253        0.2686  0.6566   0.8351  0.1580         0.3805     1.0208
+19           tune  M3_lgbm_full             tenure  T2 (<=821d)   451         103         0.2284        0.2120  0.5790   0.8802  0.1182         0.1334     1.2263
+20           tune  M3_lgbm_full             tenure   T3 (>821d)  7089         716         0.1010        0.0965  0.5852   0.9212  0.0596         0.0715     1.1771
+21           tune  M3_lgbm_full  n_cutoffs_present          1-9   343         107         0.3120        0.2662  0.6713   0.8475  0.1501         0.3083     1.1211
+22           tune  M3_lgbm_full  n_cutoffs_present        10-14   698         172         0.2464        0.2089  0.6100   0.8698  0.1277         0.3027     1.0905
+23           tune  M3_lgbm_full  n_cutoffs_present           15  6874         662         0.0963        0.0935  0.5779   0.9218  0.0574         0.0448     1.1777
+24  temporal_test  M3_lgbm_full             tenure  T1 (<=533d)   213          65         0.3052        0.2672  0.6034   0.7967  0.1669         0.2420     0.9802
+25  temporal_test  M3_lgbm_full             tenure  T2 (<=821d)   268          85         0.3172        0.2407  0.6945   0.8637  0.1460         0.5762     1.0028
+26  temporal_test  M3_lgbm_full             tenure   T3 (>821d)  7524         867         0.1152        0.1055  0.5952   0.9234  0.0654         0.1419     1.1857
+27  temporal_test  M3_lgbm_full  n_cutoffs_present          1-9   433         136         0.3141        0.2541  0.6246   0.8192  0.1627         0.4132     0.9117
+28  temporal_test  M3_lgbm_full  n_cutoffs_present        10-14   698         170         0.2436        0.2016  0.6705   0.8840  0.1188         0.3573     1.0945
+29  temporal_test  M3_lgbm_full  n_cutoffs_present           15  6874         711         0.1034        0.0967  0.5829   0.9262  0.0601         0.1060     1.2014
+30   holdout_test  M3_lgbm_full             tenure  T1 (<=533d)    59          18         0.3051        0.2401  0.6208   0.8110  0.1656         0.4469     0.9873
+31   holdout_test  M3_lgbm_full             tenure  T2 (<=821d)    73          21         0.2877        0.2196  0.6726   0.8681  0.1390         0.5454     1.0275
+32   holdout_test  M3_lgbm_full             tenure   T3 (>821d)  1872         210         0.1122        0.1014  0.6105   0.9269  0.0634         0.1626     1.1914
+33   holdout_test  M3_lgbm_full  n_cutoffs_present          1-9   120          36         0.3000        0.2404  0.6694   0.8613  0.1444         0.4304     1.1410
+34   holdout_test  M3_lgbm_full  n_cutoffs_present        10-14   196          46         0.2347        0.1935  0.6760   0.8907  0.1154         0.3634     1.1521
+35   holdout_test  M3_lgbm_full  n_cutoffs_present           15  1688         167         0.0989        0.0908  0.5826   0.9264  0.0584         0.1339     1.1763
+set                                                 tune  temporal_test  holdout_test
+model               by                group                                          
+M2_lr_full          n_cutoffs_present 1-9          0.366          0.400         0.419
+                                      10-14        0.320          0.320         0.352
+                                      15           0.170          0.156         0.168
+                    tenure            T1 (<=533d)  0.420          0.239         0.444
+                                      T2 (<=821d)  0.139          0.561         0.561
+                                      T3 (>821d)   0.194          0.178         0.187
+M2_tenure_norm_drop n_cutoffs_present 1-9          0.498          0.445         0.456
+                                      10-14        0.277          0.246         0.266
+                                      15          -0.038         -0.017         0.002
+                    tenure            T1 (<=533d)  0.543          0.328         0.541
+                                      T2 (<=821d)  0.112          0.547         0.532
+                                      T3 (>821d)  -0.007          0.020         0.034
+M2_tenure_norm_keep n_cutoffs_present 1-9          0.379          0.400         0.411
+                                      10-14        0.340          0.322         0.347
+                                      15           0.146          0.126         0.143
+                    tenure            T1 (<=533d)  0.435          0.233         0.434
+                                      T2 (<=821d)  0.160          0.568         0.554
+                                      T3 (>821d)   0.173          0.153         0.165
+M2_window4q         n_cutoffs_present 1-9          0.427          0.329         0.349
+                                      10-14        0.303          0.195         0.227
+                                      15           0.083          0.017         0.031
+                    tenure            T1 (<=533d)  0.474          0.197         0.412
+                                      T2 (<=821d)  0.126          0.458         0.447
+                                      T3 (>821d)   0.110          0.041         0.051
+M2_window6q         n_cutoffs_present 1-9          0.444          0.389         0.406
+                                      10-14        0.329          0.215         0.229
+                                      15           0.110          0.004         0.026
+                    tenure            T1 (<=533d)  0.493          0.269         0.482
+                                      T2 (<=821d)  0.151          0.502         0.492
+                                      T3 (>821d)   0.137          0.032         0.047
+M3_lgbm_full        n_cutoffs_present 1-9          0.308          0.413         0.430
+                                      10-14        0.303          0.357         0.363
+                                      15           0.045          0.106         0.134
+                    tenure            T1 (<=533d)  0.380          0.242         0.447
+                                      T2 (<=821d)  0.133          0.576         0.545
+                                      T3 (>821d)   0.071          0.142         0.163
+M3_window4q         n_cutoffs_present 1-9          0.422          0.318         0.371
+                                      10-14        0.306          0.233         0.250
+                                      15          -0.035          0.063         0.102
+                    tenure            T1 (<=533d)  0.486          0.176         0.401
+                                      T2 (<=821d)  0.139          0.449         0.468
+                                      T3 (>821d)  -0.004          0.087         0.117
+M3_window6q         n_cutoffs_present 1-9          0.401          0.413         0.435
+                                      10-14        0.318          0.292         0.302
+                                      15           0.004         -0.009         0.028
+                    tenure            T1 (<=533d)  0.463          0.277         0.489
+                                      T2 (<=821d)  0.147          0.535         0.514
+                                      T3 (>821d)   0.034          0.034         0.064
+                model_a       model_b         metric  estimate  ci_low  ci_high  ci_excludes_0     B            set
+0   M2_tenure_norm_keep    M2_lr_full          ap_y0    0.0033 -0.0026   0.0087          False  1000  temporal_test
+1   M2_tenure_norm_keep    M2_lr_full          brier   -0.0000 -0.0003   0.0002          False  1000  temporal_test
+2   M2_tenure_norm_keep    M2_lr_full  cal_intercept   -0.0219 -0.0263  -0.0175           True  1000  temporal_test
+3   M2_tenure_norm_drop    M2_lr_full          ap_y0    0.0036 -0.0031   0.0105          False  1000  temporal_test
+4   M2_tenure_norm_drop    M2_lr_full          brier   -0.0003 -0.0007   0.0001          False  1000  temporal_test
+5   M2_tenure_norm_drop    M2_lr_full  cal_intercept   -0.1367 -0.1429  -0.1307           True  1000  temporal_test
+6           M2_window4q    M2_lr_full          ap_y0   -0.0021 -0.0048   0.0005          False  1000  temporal_test
+7           M2_window4q    M2_lr_full          brier   -0.0004 -0.0007  -0.0001           True  1000  temporal_test
+8           M2_window4q    M2_lr_full  cal_intercept   -0.1301 -0.1329  -0.1272           True  1000  temporal_test
+9           M2_window6q    M2_lr_full          ap_y0   -0.0015 -0.0048   0.0024          False  1000  temporal_test
+10          M2_window6q    M2_lr_full          brier   -0.0004 -0.0007  -0.0000           True  1000  temporal_test
+11          M2_window6q    M2_lr_full  cal_intercept   -0.1312 -0.1353  -0.1270           True  1000  temporal_test
+12          M3_window4q  M3_lgbm_full          ap_y0    0.0073  0.0000   0.0135           True  1000  temporal_test
+13          M3_window4q  M3_lgbm_full          brier   -0.0007 -0.0010  -0.0003           True  1000  temporal_test
+14          M3_window4q  M3_lgbm_full  cal_intercept   -0.0592 -0.0647  -0.0535           True  1000  temporal_test
+15          M3_window6q  M3_lgbm_full          ap_y0    0.0051 -0.0022   0.0121          False  1000  temporal_test
+16          M3_window6q  M3_lgbm_full          brier   -0.0005 -0.0008  -0.0001           True  1000  temporal_test
+17          M3_window6q  M3_lgbm_full  cal_intercept   -0.0957 -0.1009  -0.0904           True  1000  temporal_test
+18  M2_tenure_norm_keep    M2_lr_full          ap_y0    0.0024 -0.0077   0.0142          False  1000   holdout_test
+19  M2_tenure_norm_keep    M2_lr_full          brier   -0.0001 -0.0005   0.0002          False  1000   holdout_test
+20  M2_tenure_norm_keep    M2_lr_full  cal_intercept   -0.0196 -0.0281  -0.0101           True  1000   holdout_test
+21  M2_tenure_norm_drop    M2_lr_full          ap_y0   -0.0017 -0.0157   0.0104          False  1000   holdout_test
+22  M2_tenure_norm_drop    M2_lr_full          brier   -0.0001 -0.0008   0.0006          False  1000   holdout_test
+23  M2_tenure_norm_drop    M2_lr_full  cal_intercept   -0.1310 -0.1409  -0.1201           True  1000   holdout_test
+24          M2_window4q    M2_lr_full          ap_y0   -0.0037 -0.0083   0.0013          False  1000   holdout_test
+25          M2_window4q    M2_lr_full          brier   -0.0002 -0.0007   0.0003          False  1000   holdout_test
+26          M2_window4q    M2_lr_full  cal_intercept   -0.1277 -0.1333  -0.1220           True  1000   holdout_test
+27          M2_window6q    M2_lr_full          ap_y0   -0.0051 -0.0112   0.0010          False  1000   holdout_test
+28          M2_window6q    M2_lr_full          brier   -0.0001 -0.0007   0.0005          False  1000   holdout_test
+29          M2_window6q    M2_lr_full  cal_intercept   -0.1252 -0.1330  -0.1174           True  1000   holdout_test
+30          M3_window4q  M3_lgbm_full          ap_y0    0.0039 -0.0117   0.0181          False  1000   holdout_test
+31          M3_window4q  M3_lgbm_full          brier    0.0000 -0.0007   0.0007          False  1000   holdout_test
+32          M3_window4q  M3_lgbm_full  cal_intercept   -0.0466 -0.0578  -0.0339           True  1000   holdout_test
+33          M3_window6q  M3_lgbm_full          ap_y0    0.0040 -0.0101   0.0166          False  1000   holdout_test
+34          M3_window6q  M3_lgbm_full          brier   -0.0003 -0.0009   0.0003          False  1000   holdout_test
+35          M3_window6q  M3_lgbm_full  cal_intercept   -0.0860 -0.0963  -0.0751           True  1000   holdout_test
+36  M2_tenure_norm_keep    M2_lr_full          ap_y0   -0.0076 -0.0136  -0.0020           True  1000           tune
+37  M2_tenure_norm_keep    M2_lr_full          brier    0.0003  0.0001   0.0005           True  1000           tune
+38  M2_tenure_norm_keep    M2_lr_full  cal_intercept   -0.0137 -0.0182  -0.0093           True  1000           tune
+39  M2_tenure_norm_drop    M2_lr_full          ap_y0   -0.0089 -0.0179  -0.0015           True  1000           tune
+40  M2_tenure_norm_drop    M2_lr_full          brier   -0.0000 -0.0005   0.0005          False  1000           tune
+41  M2_tenure_norm_drop    M2_lr_full  cal_intercept   -0.1536 -0.1615  -0.1458           True  1000           tune
+42          M2_window4q    M2_lr_full          ap_y0    0.0007 -0.0045   0.0047          False  1000           tune
+43          M2_window4q    M2_lr_full          brier   -0.0002 -0.0005   0.0001          False  1000           tune
+44          M2_window4q    M2_lr_full  cal_intercept   -0.0634 -0.0679  -0.0590           True  1000           tune
+45          M2_window6q    M2_lr_full          ap_y0    0.0024 -0.0011   0.0050          False  1000           tune
+46          M2_window6q    M2_lr_full          brier   -0.0001 -0.0002   0.0001          False  1000           tune
+47          M2_window6q    M2_lr_full  cal_intercept   -0.0375 -0.0406  -0.0343           True  1000           tune
+48          M3_window4q  M3_lgbm_full          ap_y0   -0.0124 -0.0217  -0.0014           True  1000           tune
+49          M3_window4q  M3_lgbm_full          brier   -0.0000 -0.0004   0.0004          False  1000           tune
+50          M3_window4q  M3_lgbm_full  cal_intercept   -0.0504 -0.0577  -0.0429           True  1000           tune
+51          M3_window6q  M3_lgbm_full          ap_y0   -0.0055 -0.0123   0.0012          False  1000           tune
+52          M3_window6q  M3_lgbm_full          brier   -0.0000 -0.0003   0.0003          False  1000           tune
+53          M3_window6q  M3_lgbm_full  cal_intercept   -0.0208 -0.0261  -0.0156           True  1000           tune
+[   0.8 min] XONG F

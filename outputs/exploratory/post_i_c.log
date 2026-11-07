@@ -1,0 +1,148 @@
+          C  tune_ap_y0  selected
+0     0.001     0.44112     False
+1     0.010     0.49988     False
+2     0.100     0.52594     False
+3     1.000     0.53370      True
+4    10.000     0.53273     False
+5   100.000     0.53273     False
+6  1000.000     0.53273     False
+[   0.0 min] spline C chốt = 1.0
+[   0.0 min] done B2_recency
+[   0.0 min] done M1_lr_rfm
+[   0.0 min] done M2_lr_full
+[   0.0 min] done M3_lgbm_full
+[   0.0 min] done C1a_rule_rec_to_gap
+[   0.0 min] done C1b_rule_median_gap
+[   0.0 min] done C2_spline_recency
+[   0.0 min] {'kind': 'bgnbd', 'cutoff': '2021-06-30', 'n': 3948, 'p1': np.float64(1.1220004010861453), 'p2': np.float64(1.8537642222716977), 'p3': np.float64(0.012546020524953561), 'p4': np.float64(20.268574565602243), 'mean_loglik': -111.91182105435931, 'n_nonfinite_ll': 0, 'fit_seconds': 0.1203300952911377}
+[   0.0 min] {'kind': 'bgnbd', 'cutoff': '2021-09-30', 'n': 3967, 'p1': np.float64(1.1310177324065984), 'p2': np.float64(1.8429865562991534), 'p3': np.float64(0.01839501377017002), 'p4': np.float64(37.38067794032468), 'mean_loglik': -120.66440220079889, 'n_nonfinite_ll': 0, 'fit_seconds': 0.11860203742980957}
+[   0.0 min] ckpt hit: c_clv_bgnbd_2021-06-30
+[   0.0 min] ckpt hit: c_clv_bgnbd_2021-09-30
+[   0.0 min] {'kind': 'bgnbd', 'cutoff': '2022-03-31', 'n': 3999, 'p1': np.float64(1.1533871832466112), 'p2': np.float64(1.8289047720857405), 'p3': np.float64(0.032078540883319955), 'p4': np.float64(99.71724452150555), 'mean_loglik': -138.29954803086585, 'n_nonfinite_ll': 0, 'fit_seconds': 0.12085199356079102}
+[   0.0 min] {'kind': 'bgnbd', 'cutoff': '2022-06-30', 'n': 4006, 'p1': np.float64(1.1660613455129754), 'p2': np.float64(1.8289573869517897), 'p3': np.float64(0.03163735085790674), 'p4': np.float64(70.27619735726405), 'mean_loglik': -147.21770396806633, 'n_nonfinite_ll': 0, 'fit_seconds': 0.17151308059692383}
+[   0.0 min] ckpt hit: c_clv_bgnbd_2022-03-31
+[   0.0 min] ckpt hit: c_clv_bgnbd_2022-06-30
+[   0.0 min] ckpt hit: c_clv_bgnbd_2022-03-31
+[   0.0 min] ckpt hit: c_clv_bgnbd_2022-06-30
+[   0.0 min] ckpt hit: c_clv_bgnbd_2022-03-31
+[   0.0 min] ckpt hit: c_clv_bgnbd_2022-06-30
+[   0.0 min] done C3a_bgnbd_roll
+[   0.1 min] {'kind': 'pareto', 'cutoff': '2021-06-30', 'n': 3948, 'p1': np.float64(1.123703812748118), 'p2': np.float64(1.8583868160903656), 'p3': np.float64(154.51665876175315), 'p4': np.float64(1075858.30648915), 'mean_loglik': np.float64(-111.90424372492319), 'n_nonfinite_ll': 0, 'fit_seconds': 6.6328229904174805}
+[   0.2 min] {'kind': 'pareto', 'cutoff': '2021-09-30', 'n': 3967, 'p1': np.float64(1.134342870477698), 'p2': np.float64(1.8491982501818967), 'p3': np.float64(158.50465190221513), 'p4': np.float64(976314.6133533344), 'mean_loglik': np.float64(-120.6541487252438), 'n_nonfinite_ll': 0, 'fit_seconds': 5.696115970611572}
+[   0.2 min] ckpt hit: c_clv_pareto_2021-06-30
+[   0.2 min] ckpt hit: c_clv_pareto_2021-09-30
+[   0.3 min] {'kind': 'pareto', 'cutoff': '2022-03-31', 'n': 3999, 'p1': np.float64(1.1585141247090667), 'p2': np.float64(1.8379886703873176), 'p3': np.float64(159.5011872819386), 'p4': np.float64(1084373.0655211643), 'mean_loglik': np.float64(-138.2885680722671), 'n_nonfinite_ll': 0, 'fit_seconds': 4.703190088272095}
+[   0.4 min] {'kind': 'pareto', 'cutoff': '2022-06-30', 'n': 4006, 'p1': np.float64(1.1704352885092806), 'p2': np.float64(1.8366500106806505), 'p3': np.float64(157.55719660968379), 'p4': np.float64(891955.2081979067), 'mean_loglik': np.float64(-147.2026770637748), 'n_nonfinite_ll': 0, 'fit_seconds': 4.230772018432617}
+[   0.4 min] ckpt hit: c_clv_pareto_2022-03-31
+[   0.4 min] ckpt hit: c_clv_pareto_2022-06-30
+[   0.4 min] ckpt hit: c_clv_pareto_2022-03-31
+[   0.4 min] ckpt hit: c_clv_pareto_2022-06-30
+[   0.4 min] ckpt hit: c_clv_pareto_2022-03-31
+[   0.4 min] ckpt hit: c_clv_pareto_2022-06-30
+[   0.4 min] done C3b_pareto_roll
+[   0.4 min] {'kind': 'bgnbd', 'cutoff': '2021-03-31', 'n': 3935, 'p1': np.float64(1.105420112480461), 'p2': np.float64(1.8681832890200776), 'p3': np.float64(0.014486859896882446), 'p4': np.float64(17.15541739763673), 'mean_loglik': -102.82076016554811, 'n_nonfinite_ll': 0, 'fit_seconds': 0.0959920883178711}
+[   0.4 min] ckpt hit: c_clv_bgnbd_2021-03-31
+[   0.4 min] ckpt hit: c_clv_bgnbd_2021-03-31
+[   0.4 min] ckpt hit: c_clv_bgnbd_2021-03-31
+[   0.4 min] {'kind': 'bgnbd', 'cutoff': '2021-12-31', 'n': 3993, 'p1': np.float64(1.1447851177396207), 'p2': np.float64(1.8314724373892406), 'p3': np.float64(0.01498850986548377), 'p4': np.float64(33.055156238673476), 'mean_loglik': -129.50914242874362, 'n_nonfinite_ll': 0, 'fit_seconds': 0.11513090133666992}
+[   0.4 min] ckpt hit: c_clv_bgnbd_2021-12-31
+[   0.4 min] ckpt hit: c_clv_bgnbd_2021-12-31
+[   0.4 min] ckpt hit: c_clv_bgnbd_2021-12-31
+[   0.4 min] ckpt hit: c_clv_bgnbd_2021-12-31
+[   0.4 min] ckpt hit: c_clv_bgnbd_2021-12-31
+[   0.4 min] ckpt hit: c_clv_bgnbd_2021-12-31
+[   0.4 min] ckpt hit: c_clv_bgnbd_2021-12-31
+[   0.4 min] done C3a_bgnbd_fixed
+[   0.5 min] {'kind': 'pareto', 'cutoff': '2021-03-31', 'n': 3935, 'p1': np.float64(1.1081609285151732), 'p2': np.float64(1.8746616133945044), 'p3': np.float64(152.64541854144204), 'p4': np.float64(815395.6335191746), 'mean_loglik': np.float64(-102.8124385347207), 'n_nonfinite_ll': 0, 'fit_seconds': 7.1162731647491455}
+[   0.5 min] ckpt hit: c_clv_pareto_2021-03-31
+[   0.5 min] ckpt hit: c_clv_pareto_2021-03-31
+[   0.5 min] ckpt hit: c_clv_pareto_2021-03-31
+[   0.6 min] {'kind': 'pareto', 'cutoff': '2021-12-31', 'n': 3993, 'p1': np.float64(1.1474278120653627), 'p2': np.float64(1.8366519988009895), 'p3': np.float64(158.584296579052), 'p4': np.float64(1222036.276843038), 'mean_loglik': np.float64(-129.50069018557605), 'n_nonfinite_ll': 0, 'fit_seconds': 5.421066045761108}
+[   0.6 min] ckpt hit: c_clv_pareto_2021-12-31
+[   0.6 min] ckpt hit: c_clv_pareto_2021-12-31
+[   0.6 min] ckpt hit: c_clv_pareto_2021-12-31
+[   0.6 min] ckpt hit: c_clv_pareto_2021-12-31
+[   0.6 min] ckpt hit: c_clv_pareto_2021-12-31
+[   0.6 min] ckpt hit: c_clv_pareto_2021-12-31
+[   0.6 min] ckpt hit: c_clv_pareto_2021-12-31
+[   0.6 min] done C3b_pareto_fixed
+[   0.6 min] bốn mô hình khóa khớp bảng khóa đến 4 chữ số trên 9 chỉ số
+[   0.9 min] bootstrap xong temporal_test
+[   1.0 min] bootstrap xong holdout_test
+              set                model     n  prevalence_y0   ap_y0  roc_auc   brier  cal_intercept  cal_slope  mean_pred_p0  precision_top10  recall_top10  precision_top20  recall_top20
+0            tune           B2_recency  7915         0.1189  0.5346   0.8724  0.0749        -0.2247     1.1053        0.1375           0.5625        0.4734           0.4216        0.7096
+1   temporal_test           B2_recency  8005         0.1270  0.5502   0.8682  0.0780        -0.1376     1.0175        0.1386           0.5868        0.4621           0.4400        0.6931
+2    holdout_test           B2_recency  2004         0.1243  0.5743   0.8721  0.0743        -0.1208     1.0284        0.1339           0.6122        0.4967           0.4397        0.7099
+3            tune            M1_lr_rfm  7915         0.1189  0.5723   0.9064  0.0723         0.3611     1.1064        0.0949           0.5909        0.4973           0.4451        0.7492
+4   temporal_test            M1_lr_rfm  8005         0.1270  0.5649   0.9024  0.0791         0.5347     1.0917        0.0909           0.5968        0.4700           0.4707        0.7414
+5    holdout_test            M1_lr_rfm  2004         0.1243  0.5812   0.9087  0.0763         0.5337     1.1138        0.0892           0.5990        0.4859           0.4602        0.7430
+6            tune           M2_lr_full  7915         0.1189  0.5977   0.9209  0.0675         0.2110     1.0814        0.1050           0.6048        0.5090           0.4672        0.7864
+7   temporal_test           M2_lr_full  8005         0.1270  0.5966   0.9185  0.0714         0.2043     1.0587        0.1129           0.6130        0.4828           0.4894        0.7709
+8    holdout_test           M2_lr_full  2004         0.1243  0.6110   0.9207  0.0698         0.2250     1.0564        0.1092           0.6287        0.5100           0.4652        0.7510
+9            tune         M3_lgbm_full  7915         0.1189  0.5953   0.9196  0.0676         0.1080     1.1745        0.1112           0.6061        0.5101           0.4716        0.7938
+10  temporal_test         M3_lgbm_full  8005         0.1270  0.6045   0.9207  0.0708         0.1735     1.1746        0.1144           0.6255        0.4926           0.4938        0.7778
+11   holdout_test         M3_lgbm_full  2004         0.1243  0.6157   0.9242  0.0691         0.2037     1.1807        0.1098           0.6386        0.5181           0.4751        0.7671
+12           tune  C1a_rule_rec_to_gap  7915         0.1189  0.3625   0.7253  0.0905        -0.2019     1.1361        0.1390           0.4242        0.3571           0.2962        0.4986
+13  temporal_test  C1a_rule_rec_to_gap  8005         0.1270  0.3781   0.7290  0.0955        -0.1196     1.0854        0.1392           0.4522        0.3561           0.3246        0.5113
+14   holdout_test  C1a_rule_rec_to_gap  2004         0.1243  0.4241   0.7461  0.0895        -0.1056     1.2858        0.1348           0.5000        0.4056           0.3358        0.5422
+15           tune  C1b_rule_median_gap  7915         0.1189  0.4277   0.8083  0.0849        -0.0165     1.0921        0.1204           0.4853        0.4085           0.3508        0.5906
+16  temporal_test  C1b_rule_median_gap  8005         0.1270  0.4194   0.8038  0.0910         0.1478     1.0717        0.1139           0.4859        0.3827           0.3579        0.5637
+17   holdout_test  C1b_rule_median_gap  2004         0.1243  0.4164   0.8064  0.0893         0.1095     1.0518        0.1146           0.4802        0.3896           0.3621        0.5846
+18           tune    C2_spline_recency  7915         0.1189  0.5337   0.8724  0.0749        -0.2108     1.1351        0.1366           0.5625        0.4734           0.4216        0.7096
+19  temporal_test    C2_spline_recency  8005         0.1270  0.5526   0.8682  0.0777        -0.1258     1.1038        0.1378           0.5868        0.4621           0.4400        0.6931
+20   holdout_test    C2_spline_recency  2004         0.1243  0.5764   0.8721  0.0742        -0.0987     1.1189        0.1324           0.6122        0.4967           0.4397        0.7099
+21           tune       C3a_bgnbd_roll  7915         0.1189  0.5417   0.8986  0.0734         0.0723     0.5821        0.1147           0.5808        0.4888           0.4400        0.7407
+22  temporal_test       C3a_bgnbd_roll  8005         0.1270  0.5415   0.8994  0.0791         0.2483     0.5448        0.1129           0.5855        0.4612           0.4576        0.7207
+23   holdout_test       C3a_bgnbd_roll  2004         0.1243  0.5844   0.9042  0.0745         0.2919     0.6244        0.1081           0.5743        0.4659           0.4627        0.7470
+24           tune      C3b_pareto_roll  7915         0.1189  0.5406   0.8997  0.0736         0.0024     0.5879        0.1187           0.5821        0.4899           0.4451        0.7492
+25  temporal_test      C3b_pareto_roll  8005         0.1270  0.5476   0.9015  0.0784         0.1627     0.5487        0.1178           0.5930        0.4671           0.4632        0.7296
+26   holdout_test      C3b_pareto_roll  2004         0.1243  0.5940   0.9068  0.0736         0.2062     0.6305        0.1128           0.5842        0.4739           0.4627        0.7470
+27           tune      C3a_bgnbd_fixed  7915         0.1189  0.5426   0.8990  0.0734         0.0590     0.5806        0.1155           0.5821        0.4899           0.4407        0.7418
+28  temporal_test      C3a_bgnbd_fixed  8005         0.1270  0.5446   0.8990  0.0789         0.2700     0.5380        0.1117           0.5880        0.4631           0.4588        0.7227
+29   holdout_test      C3a_bgnbd_fixed  2004         0.1243  0.5845   0.9034  0.0746         0.3071     0.6109        0.1073           0.5743        0.4659           0.4577        0.7390
+30           tune     C3b_pareto_fixed  7915         0.1189  0.5406   0.9002  0.0737        -0.0211     0.5902        0.1201           0.5795        0.4878           0.4438        0.7471
+31  temporal_test     C3b_pareto_fixed  8005         0.1270  0.5477   0.9011  0.0784         0.1874     0.5481        0.1164           0.5918        0.4661           0.4619        0.7276
+32   holdout_test     C3b_pareto_fixed  2004         0.1243  0.5920   0.9060  0.0738         0.2291     0.6260        0.1116           0.5792        0.4699           0.4652        0.7510
+      kind      cutoff     n      p1      p2        p3            p4  mean_loglik  n_nonfinite_ll  fit_seconds
+0    bgnbd  2021-06-30  3948  1.1220  1.8538    0.0125  2.026860e+01    -111.9118               0       0.1203
+1    bgnbd  2021-09-30  3967  1.1310  1.8430    0.0184  3.738070e+01    -120.6644               0       0.1186
+2    bgnbd  2022-03-31  3999  1.1534  1.8289    0.0321  9.971720e+01    -138.2995               0       0.1209
+3    bgnbd  2022-06-30  4006  1.1661  1.8290    0.0316  7.027620e+01    -147.2177               0       0.1715
+4   pareto  2021-06-30  3948  1.1237  1.8584  154.5167  1.075858e+06    -111.9042               0       6.6328
+5   pareto  2021-09-30  3967  1.1343  1.8492  158.5047  9.763146e+05    -120.6541               0       5.6961
+6   pareto  2022-03-31  3999  1.1585  1.8380  159.5012  1.084373e+06    -138.2886               0       4.7032
+7   pareto  2022-06-30  4006  1.1704  1.8367  157.5572  8.919552e+05    -147.2027               0       4.2308
+8    bgnbd  2021-03-31  3935  1.1054  1.8682    0.0145  1.715540e+01    -102.8208               0       0.0960
+9    bgnbd  2021-12-31  3993  1.1448  1.8315    0.0150  3.305520e+01    -129.5091               0       0.1151
+10  pareto  2021-03-31  3935  1.1082  1.8747  152.6454  8.153956e+05    -102.8124               0       7.1163
+11  pareto  2021-12-31  3993  1.1474  1.8367  158.5843  1.222036e+06    -129.5007               0       5.4211
+                model_a     model_b metric  estimate  ci_low  ci_high  ci_excludes_0     B            set
+0   C1a_rule_rec_to_gap  B2_recency  ap_y0   -0.1721 -0.1992  -0.1437           True  1000  temporal_test
+3   C1b_rule_median_gap  B2_recency  ap_y0   -0.1308 -0.1712  -0.0958           True  1000  temporal_test
+6     C2_spline_recency  B2_recency  ap_y0    0.0024 -0.0000   0.0049          False  1000  temporal_test
+9        C3a_bgnbd_roll  B2_recency  ap_y0   -0.0088 -0.0346   0.0139          False  1000  temporal_test
+12      C3b_pareto_roll  B2_recency  ap_y0   -0.0026 -0.0271   0.0198          False  1000  temporal_test
+15      C3a_bgnbd_fixed  B2_recency  ap_y0   -0.0057 -0.0320   0.0169          False  1000  temporal_test
+18     C3b_pareto_fixed  B2_recency  ap_y0   -0.0025 -0.0270   0.0199          False  1000  temporal_test
+21  C1a_rule_rec_to_gap  M2_lr_full  ap_y0   -0.2185 -0.2500  -0.1861           True  1000  temporal_test
+24  C1b_rule_median_gap  M2_lr_full  ap_y0   -0.1772 -0.2132  -0.1451           True  1000  temporal_test
+27    C2_spline_recency  M2_lr_full  ap_y0   -0.0440 -0.0582  -0.0288           True  1000  temporal_test
+30       C3a_bgnbd_roll  M2_lr_full  ap_y0   -0.0551 -0.0792  -0.0321           True  1000  temporal_test
+33      C3b_pareto_roll  M2_lr_full  ap_y0   -0.0490 -0.0734  -0.0263           True  1000  temporal_test
+36      C3a_bgnbd_fixed  M2_lr_full  ap_y0   -0.0520 -0.0760  -0.0292           True  1000  temporal_test
+39     C3b_pareto_fixed  M2_lr_full  ap_y0   -0.0489 -0.0731  -0.0263           True  1000  temporal_test
+42  C1a_rule_rec_to_gap  B2_recency  ap_y0   -0.1502 -0.2117  -0.0978           True  1000   holdout_test
+45  C1b_rule_median_gap  B2_recency  ap_y0   -0.1579 -0.2304  -0.0846           True  1000   holdout_test
+48    C2_spline_recency  B2_recency  ap_y0    0.0020  0.0000   0.0072          False  1000   holdout_test
+51       C3a_bgnbd_roll  B2_recency  ap_y0    0.0101 -0.0412   0.0562          False  1000   holdout_test
+54      C3b_pareto_roll  B2_recency  ap_y0    0.0197 -0.0305   0.0613          False  1000   holdout_test
+57      C3a_bgnbd_fixed  B2_recency  ap_y0    0.0101 -0.0417   0.0573          False  1000   holdout_test
+60     C3b_pareto_fixed  B2_recency  ap_y0    0.0177 -0.0327   0.0598          False  1000   holdout_test
+63  C1a_rule_rec_to_gap  M2_lr_full  ap_y0   -0.1868 -0.2578  -0.1263           True  1000   holdout_test
+66  C1b_rule_median_gap  M2_lr_full  ap_y0   -0.1946 -0.2567  -0.1331           True  1000   holdout_test
+69    C2_spline_recency  M2_lr_full  ap_y0   -0.0346 -0.0671  -0.0023           True  1000   holdout_test
+72       C3a_bgnbd_roll  M2_lr_full  ap_y0   -0.0266 -0.0720   0.0130          False  1000   holdout_test
+75      C3b_pareto_roll  M2_lr_full  ap_y0   -0.0170 -0.0617   0.0208          False  1000   holdout_test
+78      C3a_bgnbd_fixed  M2_lr_full  ap_y0   -0.0265 -0.0712   0.0130          False  1000   holdout_test
+81     C3b_pareto_fixed  M2_lr_full  ap_y0   -0.0190 -0.0630   0.0188          False  1000   holdout_test
+[   1.0 min] XONG C
